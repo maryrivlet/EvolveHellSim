@@ -581,17 +581,30 @@ function OnChange() {
     
     ShowMercOptions();
     
+    /* Show thralls only when needed */
+    if (gParams.unfathomable > 0) {
+        $('#hThralls').parent()[0].hidden = false;
+        $('#cThralls')[0].hidden = false;
+    } else {
+        $('#hThralls').parent()[0].hidden = true;
+        $('#cThralls')[0].hidden = true;
+    }
+    
     /* Round dark energy to 3 places */
     $('#darkEnergy')[0].value = gParams.darkEnergy = +gParams.darkEnergy.toFixed(3);
     
     /* Manage collapsers */
     $('.collapser-icon').each(function(index, element) {
         var el = $(element);
-        let content = $(el.parent().data("target"));
-        if (el.text() == "+") {
-            content.hide(100);
+        if (gParams.unfathomable == 0 && el[0].id == 'hThrallsStatus') {
+            /* Skip */
         } else {
-            content.show(100);
+            let content = $(el.parent().data("target"));
+            if (el.text() == "+") {
+                content.hide(100);
+            } else {
+                content.show(100);
+            }
         }
     });
     
@@ -746,6 +759,16 @@ function ImportSave() {
     $('#saveString').val("")
 }
 
+function ParseFathom(save, race) {
+    if (save.city.surfaceDwellers) {
+        let idx = save.city.surfaceDwellers.indexOf(race);
+        if (idx >= 0) {
+            return global.city.captive_housing['race' + idx];
+        }
+    }
+    return 0;
+}
+
 function ConvertSave(save) {
     console.log(save);
     
@@ -790,7 +813,22 @@ function ConvertSave(save) {
     $('#smoldering')[0].value = save.race['smoldering'] || 0;
     $('#sniper')[0].value = save.race['sniper'] || 0;
     $('#sticky')[0].value = save.race['sticky'] || 0;
-    
+    $('#unfathomable')[0].value = save.race['unfathomable'] || 0;
+
+    $('#antid_thralls') = ParseFathom(save, 'antid');
+    $('#balorg_thralls') = ParseFathom(save, 'balorg');
+    $('#centaur_thralls') = ParseFathom(save, 'centaur');
+    $('#mantis_thralls') = ParseFathom(save, 'mantis');
+    $('#orc_thralls') = ParseFathom(save, 'orc');
+    $('#penguicula_thralls') = ParseFathom(save, 'penguicula');
+    $('#rhinotaur_thralls') = ParseFathom(save, 'rhinotaur');
+    $('#scorpid_thralls') = ParseFathom(save, 'scorpid');
+    $('#sharkin_thralls') = ParseFathom(save, 'sharkin');
+    $('#tortosian_thralls') = ParseFathom(save, 'tortosian');
+    $('#unicorn_thralls') = ParseFathom(save, 'unicorn');
+    $('#wendigo_thralls') = ParseFathom(save, 'wendigo');
+    $('#yeti_thralls') = ParseFathom(save, 'yeti');
+
     $('#zealotry')[0].checked = save.tech['fanaticism'] && save.tech['fanaticism'] >= 4 ? true : false;
     $('#vrTraining')[0].checked = save.tech['boot_camp'] && save.tech['boot_camp'] >= 2 ? true : false;
     $('#bacTanks')[0].checked = save.tech['medic'] && save.tech['medic'] >= 2 ? true : false;
@@ -889,21 +927,27 @@ function ConvertSave(save) {
     
 }
 
-$(document).ready( function() {
-    var traits = $('#traitsRow').children();
-    var newRow;
-    var i;
-    for (i = 5; i < traits.length; i++) {
+function GroupRow(containerQuery, rowQuery) {
+    let row = $(rowQuery);
+    let cols = row.children();
+    let newRow = row;
+    let i = Math.min(5, cols.length);
+    for (; i < cols.length; i++) {
         if (i % 5 == 0) {
             newRow = $('<div>').prop({className: 'form-row'});
-            $('#cTraits').append(newRow);
+            $(containerQuery).append(newRow);
         }
-        newRow.append(traits[i]);
+        newRow.append(cols[i]);
     }
     while (i % 5 != 0) {
         newRow.append('<div class="form-group col-sm"></div>');
         i++;
     }
+}
+
+$(document).ready( function() {
+    GroupRow("#cTraits", "#traitsRow");
+    GroupRow("#cThralls", "#thrallsRow");
     $('#cTraits')[0].hidden = false;
    
     $('#paramsForm').submit(function(event) {

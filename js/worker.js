@@ -350,6 +350,9 @@ function BloodWar(params, sim, stats) {
     if (params.ghostly) {
         gemOdds = Math.round(gemOdds * TraitSelect(params.ghostly, 0.98, 0.95, 0.9, 0.85, 0.8, 0.78, 0.77));
     }
+    if (params.wendigo_thralls) {
+        gemOdds = Math.round(gemOdds * (0.01 * (100 - 10 * Fathom(params, params.wendigo_thralls))));
+    }
     
     /* Patrols */
     let soldiersKilled = 0;
@@ -575,6 +578,9 @@ function BloodWar(params, sim, stats) {
         }
         if (params.blurry) {
             divisor *= TraitSelect(params.blurry, 1.05, 1.10, 1.15, 1.25, 1.35, 1.4, 1.45);
+        }
+        if (params.yeti_thralls) {
+            divisor *= 1 + 0.25 * Fathom(params, params.yeti_thralls);
         }
         if (params.instincts) {
             divisor *= TraitSelect(params.instincts, 1.02, 1.03, 1.05, 1.10, 1.15, 1.2, 1.25);
@@ -945,6 +951,9 @@ function PatrolCasualties(params, sim, stats, demons, ambush) {
         if (params.armored) {
             armor += TraitSelect(params.armored, 0, 1, 1, 2, 2, 2, 2);
         }
+        if (params.tortosian_thralls) {
+            armor += Math.floor(2 * Fathom(params, params.tortosian_thralls));
+        }
         if (params.scales) {
             armor += TraitSelect(params.scales, 0, 1, 1, 1, 1, 2, 2);
         }
@@ -1003,6 +1012,9 @@ function TrainingTime(params) {
     if (params.brute) {
         rate += TraitSelect(params.brute, 1, 1.25, 1.5, 2.5, 3, 3.5, 3.75);
     }
+    if (params.orc_thralls) {
+        rate += 2.5 * Fathom(params, params.orc_thralls);
+    }
     rate *= 0.25;
     
     /* Convert to ticks per soldier */
@@ -1022,8 +1034,13 @@ function ArmyRating(params, sim, size, wound) {
         }
     }
     
-    if (params.rhinoRage) {
-        rating += wounded * TraitSelect(params.rhinoRage, 0.1, 0.2, 0.3, 0.5, 0.6, 0.65, 0.7);
+    if (params.rhinoRage || (params.unfathomable && params.rhinotaur_thralls)) {
+        if (params.rhinoRage) {
+            rating += wounded * TraitSelect(params.rhinoRage, 0.1, 0.2, 0.3, 0.5, 0.6, 0.65, 0.7);
+        }
+        if (params.rhinotaur_thralls) {
+            rating += wounded * (0.5 * Fathom(params, params.rhinotaur_thralls));
+        }
     } else {
         rating -= wounded / 2;
     }
@@ -1031,25 +1048,39 @@ function ArmyRating(params, sim, size, wound) {
     /* Game code subtracts 1 for tech >= 5 to skip bunk beds.  Here that gets skipped in the HTML selection values themselves */
     let weaponTech = params.weaponTech;
 
-    if (weaponTech > 1 && params.sniper) {
-        let sniperBonus = TraitSelect(params.sniper, 0.03, 0.04, 0.06, 0.08, 0.09, 0.1, 0.11);
+    if (weaponTech > 1) {
         /* Sniper bonus doesn't apply to the base value of 1 or the Cyborg Soldiers upgrade */
         weaponTech -= params.weaponTech >= 10 ? 2 : 1;
-        weaponTech *= 1 + (sniperBonus * weaponTech);
+        if (params.sniper) {
+            weaponTech *= 1 + weaponTech * TraitSelect(params.sniper, 0.03, 0.04, 0.06, 0.08, 0.09, 0.1, 0.11);
+        }
+        if (params.centaur_thralls) {
+            weaponTech *= 1 + weaponTech * 0.08 * Fathom(params, params.centaur_thralls);
+        }
         weaponTech += params.weaponTech >= 10 ? 2 : 1;
     }
-    
+
     rating *= weaponTech;
-    
+
+    rating *= 1 + (params.tactical * 0.05);
+    if (params.zealotry) {
+        rating *= 1 + (params.temples * 0.01);
+    }
     if (sim && params.rhinoRage) {
         let rageBonus = TraitSelect(params.rhinoRage, 0.002, 0.0025, 0.005, 0.01, 0.0125, 0.014, 0.015);
         rating *= 1 + (rageBonus * sim.wounded);
+    }
+    if (sim && params.rhinotaur_thralls) {
+        rating *= 1 + 0.01 * Fathom(params, params.rhinotaur_thralls) * sim.wounded;
     }
     if (params.puny) {
         rating *= TraitSelect(params.puny, 0.8, 0.82, 0.85, 0.9, 0.94, 0.96, 0.97);
     }
     if (params.claws) {
         rating *= TraitSelect(params.claws, 1.05, 1.08, 1.12, 1.25, 1.32, 1.35, 1.38);
+    }
+    if (params.scorpid_thralls) {
+        rating *= 1 + 0.25 * Fathom(params, params.scorpid_thralls);
     }
     if (params.chameleon) {
         rating *= TraitSelect(params.chameleon, 1.03, 1.05, 1.1, 1.2, 1.25, 1.3, 1.35);
@@ -1070,11 +1101,20 @@ function ArmyRating(params, sim, size, wound) {
     if (params.apexPredator) {
         rating *= TraitSelect(params.apexPredator, 1.1, 1.15, 1.2, 1.3, 1.4, 1.45, 1.5);
     }
+    if (params.sharkin_thralls) {
+        rating *= 1 + 0.3 * Fathom(params, params.sharkin_thralls);
+    }
     if (params.fiery) {
         rating *= TraitSelect(params.fiery, 1.2, 1.3, 1.4, 1.65, 1.7, 1.72, 1.74);
     }
+    if (params.balorg_thralls) {
+        rating *= 1 + 0.65 * Fathom(params, params.balorg_thralls);
+    }
     if (params.sticky) {
         rating *= TraitSelect(params.sticky, 1.03, 1.05, 1.08, 1.15, 1.18, 1.2, 1.22);
+    }
+    if (params.pinguicula_thralls) {
+        rating *= 1 + 0.15 * Fathom(params, params.pinguicula_thralls);
     }
     if (params.pathetic) {
         rating *= TraitSelect(params.pathetic, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.88);
@@ -1082,11 +1122,8 @@ function ArmyRating(params, sim, size, wound) {
     if (params.holy) {
         rating *= TraitSelect(params.holy, 1.2, 1.25, 1.3, 1.5, 1.6, 1.65, 1.7);
     }
-    if (params.rage) {
-        rating *= 1.05;
-    }
-    if (params.magic) {
-        rating *= 0.75;
+    if (params.unicorn_thralls) {
+        rating *= 1 + 0.5 * Fathom(params, params.unicorn_thralls);
     }
     if (params.banana) {
         rating *= 0.8;
@@ -1094,23 +1131,9 @@ function ArmyRating(params, sim, size, wound) {
     if (params.governor == "soldier") {
         rating *= 1.05;
     }
-
-    rating *= 1 + (params.tactical * 0.05);
-    
-    if (params.zealotry) {
-        rating *= 1 + (params.temples * 0.01);
+    if (params.rage) {
+        rating *= 1.05;
     }
-    
-    rating *= 1 + (params.warRitual / (params.warRitual + 75));
-    
-    if (params.parasite) {
-        if (size == 1) {
-            rating += 2;
-        } else if (size > 1) {
-            rating += 4;
-        }
-    }
-    
     if (params.government == "autocracy") {
         if (params.governor == "bureaucrat") {
             rating *= 1.40;
@@ -1118,35 +1141,53 @@ function ArmyRating(params, sim, size, wound) {
             rating *= 1.35;
         }
     }
-    
+
     rating = Math.floor(rating);
-    
+
+    let racialModifier = 1;
     if (params.hivemind) {
         let breakpoint = TraitSelect(params.hivemind, 13, 12, 11, 10, 8, 7, 6);
         if (size <= 10) {
-            rating *= (size * 0.05) + (1 - breakpoint * 0.05);
+            racialModifier *= (size * 0.05) + (1 - breakpoint * 0.05);
         } else {
-            rating *= 1 + (1 - (0.99 ** (size - breakpoint)));
+            racialModifier *= 1 + (1 - (0.99 ** (size - breakpoint)));
         }
     }
-    
+    if (params.antid_thralls) {
+        racialModifier *= 1 + (1 - (0.99 ** (size * Fathom(params, params.antid_thralls) / 4))) / 2;
+    }
     if (params.cannibal) {
-        rating *= TraitSelect(params.cannibal, 1.06, 1.08, 1.1, 1.15, 1.2, 1.22, 1.24);
+        racialModifier *= TraitSelect(params.cannibal, 1.06, 1.08, 1.1, 1.15, 1.2, 1.22, 1.24);
     }
-    
+    if (params.mantis_thralls) {
+        racialModifier *= 1 + 0.15 * Fathom(params, params.mantis_thralls);
+    }
     if (params.ooze) {
-        rating *= TraitSelect(params.ooze, 0.75, 0.8, 0.85, 0.88, 0.9, 0.92, 0.94);
+        racialModifier *= TraitSelect(params.ooze, 0.75, 0.8, 0.85, 0.88, 0.9, 0.92, 0.94);
     }
-    
     if (params.government == "democracy") {
-        rating *= 0.95;
+        racialModifier *= 0.95;
     }
-    
+    if (params.magic) {
+        racialModifier *= 0.75;
+        if (params.warRitual) {
+            racialModifier *= 1 + (params.warRitual / (params.warRitual + 75));
+        }
+    }
     if (params.highPop) {
-        rating *= TraitSelect(params.highPop, 0.5, 0.5, 0.34, 0.26, 0.212, 0.18, 0.158);
+        racialModifier *= TraitSelect(params.highPop, 0.5, 0.5, 0.34, 0.26, 0.212, 0.18, 0.158);
     }
-    
-    return Math.round(rating);
+    rating *= racialModifier;
+
+    if (params.parasite) {
+        if (size == 1) {
+            rating += 2;
+        } else if (size > 1) {
+            rating += 4;
+        }
+    }
+
+    return rating;
 }
 
 function DroidSize(params) {
@@ -1234,6 +1275,14 @@ function TraitSelect(trait_rank, rank_tenth, rank_quarter, rank_half, rank_1, ra
         case 4:
             return rank_4;
     }
+}
+
+function Fathom(params, thralls) {
+    let active = Math.min(100, thralls);
+    if (params.torturers && active > params.torturers) {
+        active -= Math.ceil((active - params.torturers) / 3);
+    }
+    return (active / 100) * (params.nightmare / 5);
 }
 
 function Rand(min, max) {
