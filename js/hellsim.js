@@ -788,6 +788,7 @@ function ConvertSave(save) {
     $('#cannibal')[0].value = save.race['cannibalize'] || 0;
     $('#cautious')[0].value = save.race['cautious'] || 0;
     $('#chameleon')[0].value = save.race['chameleon'] || 0;
+    $('#chicken')[0].value = save.race['chicken'] || 0;
     $('#claws')[0].value = save.race['claws'] || 0;
     $('#diverse')[0].value = save.race['diverse'] || 0;
     $('#elusive')[0].value = save.race['elusive'] || 0;

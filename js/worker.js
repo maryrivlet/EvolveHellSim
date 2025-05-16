@@ -410,6 +410,9 @@ function BloodWar(params, sim, stats) {
             let demons = Rand(minDemons, maxDemons);
             
             let ambushOdds = 30 + Math.max(params.elusive ? TraitSelect(params.elusive, 5, 10, 15, 20, 25, 30, 35) : 0, params.chameleon ? TraitSelect(params.chameleon, 5, 10, 15, 20, 25, 30, 35) : 0);
+            if (params.chicken) {
+                ambushOdds -= TraitSelect(params.chicken, 22, 20, 15, 10, 8, 6, 4);
+            }
             
             if (Rand(0, ambushOdds) == 0) {
                 /* Ambush 
@@ -565,6 +568,9 @@ function BloodWar(params, sim, stats) {
     if (sim.threat < 10000) {
         let influx = ((10000 - sim.threat) / 2500) + 1;
         influx *= 1 + (params.beacons * 0.22);
+        if (params.chicken) {
+            influx *= TraitSelect(params.chicken, 2.1, 2, 1.75, 1.5, 1.4, 1.3, 1.2);
+        }
         influx = Math.round(influx);
         sim.threat += Rand(influx * 10, influx * 50);
     }
