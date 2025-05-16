@@ -856,13 +856,16 @@ function MercPrice(params, sim, stats) {
     if (price > 25000){
         price = 25000;
     }
-    if (sim.mercCounter > 0){
+    if (sim.mercCounter > 0) {
         price *= 1.1 ** sim.mercCounter;
     }
-    if (params.brute){
+    if (params.brute) {
         price *= TraitSelect(params.brute, 0.85, 0.8, 0.75, 0.5, 0.4, 0.35, 0.3);
     }
-    if (params.highPop){
+    if (params.orc_thralls) {
+        price *= 0.5 * Fathom(params, params.orc_thralls);
+    }
+    if (params.highPop) {
         price *= TraitSelect(params.highPop, 0.5, 0.5, 0.34, 0.26, 0.212, 0.18, 0.158);
     }
     
@@ -899,8 +902,18 @@ function HealSoldiers(params, sim, stats) {
         }
         healCredits += 3;
     }
+    if (params.mantis_thralls) {
+        if (healCredits >= 20) {
+            healCredits *= 1 + 0.15 * Fathom(params, params.mantis_thralls);
+        } else {
+            healCredits += Math.floor(3 * Fathom(params, params.mantis_thralls));
+        }
+    }
     if (params.governor == "sports") {
         healCredits *= 1.5;
+    }
+    if (params.troll_thralls) {
+        healCredits += Math.round(20 * 4 * Fathom(params, params.troll_thralls));
     }
     healCredits = Math.round(healCredits);
     

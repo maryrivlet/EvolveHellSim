@@ -761,10 +761,10 @@ function ImportSave() {
 }
 
 function ParseFathom(save, race) {
-    if (save.city.surfaceDwellers) {
+    if (save.city['surfaceDwellers']) {
         let idx = save.city.surfaceDwellers.indexOf(race);
         if (idx >= 0) {
-            return global.city.captive_housing['race' + idx];
+            return save.city.captive_housing['race' + idx];
         }
     }
     return 0;
@@ -817,6 +817,8 @@ function ConvertSave(save) {
     $('#sticky')[0].value = save.race['sticky'] || 0;
     $('#unfathomable')[0].value = save.race['unfathomable'] || 0;
 
+    $('#nightmare')[0].value =  save.stats.achieve['nightmare'] && save.stats.achieve.nightmare['mg'] || 0;
+    $('#torturers')[0].value = save.civic['torturer'] && save.civic['torturer'].assigned || 0;
     $('#channel_assault')[0].value = save.race['psychicPowers'] && save.race.psychicPowers['channel'] && save.race.psychicPowers.channel['assault'] || 0;
 
     $('#antid_thralls')[0].value = ParseFathom(save, 'antid');
@@ -829,6 +831,7 @@ function ConvertSave(save) {
     $('#scorpid_thralls')[0].value = ParseFathom(save, 'scorpid');
     $('#sharkin_thralls')[0].value = ParseFathom(save, 'sharkin');
     $('#tortosian_thralls')[0].value = ParseFathom(save, 'tortosian');
+    $('#troll_thralls')[0].value = ParseFathom(save, 'troll');
     $('#unicorn_thralls')[0].value = ParseFathom(save, 'unicorn');
     $('#wendigo_thralls')[0].value = ParseFathom(save, 'wendigo');
     $('#yeti_thralls')[0].value = ParseFathom(save, 'yeti');
