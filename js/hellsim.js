@@ -581,13 +581,14 @@ function OnChange() {
     
     ShowMercOptions();
     
-    /* Show thralls only when needed */
-    if (gParams.unfathomable > 0) {
-        $('#hThralls').parent()[0].hidden = false;
-        $('#cThralls')[0].hidden = false;
+    /* Show eldritch things only when needed */
+    let eldritch = gParams.unfathomable > 0 || gParams.psychic > 0;
+    if (eldritch) {
+        $('#hEldritch').parent()[0].hidden = false;
+        $('#cEldritch')[0].hidden = false;
     } else {
-        $('#hThralls').parent()[0].hidden = true;
-        $('#cThralls')[0].hidden = true;
+        $('#hEldritch').parent()[0].hidden = true;
+        $('#cEldritch')[0].hidden = true;
     }
     
     /* Round dark energy to 3 places */
@@ -596,7 +597,7 @@ function OnChange() {
     /* Manage collapsers */
     $('.collapser-icon').each(function(index, element) {
         var el = $(element);
-        if (gParams.unfathomable == 0 && el[0].id == 'hThrallsStatus') {
+        if (!eldritch && el[0].id == 'hEldritchStatus') {
             /* Skip */
         } else {
             let content = $(el.parent().data("target"));
@@ -802,6 +803,7 @@ function ConvertSave(save) {
     $('#ooze')[0].value = save.race['ooze'] || 0;
     $('#parasite')[0].value = save.race['parasite'] || 0;
     $('#pathetic')[0].value = save.race['pathetic'] || 0;
+    $('#psychic')[0].value = save.race['psychic'] || 0;
     $('#puny')[0].value = save.race['puny'] || 0;
     $('#rhinoRage')[0].value = save.race['rage'] || 0;
     $('#regenerative')[0].value = save.race['regenerative'] || 0;
@@ -815,19 +817,21 @@ function ConvertSave(save) {
     $('#sticky')[0].value = save.race['sticky'] || 0;
     $('#unfathomable')[0].value = save.race['unfathomable'] || 0;
 
-    $('#antid_thralls') = ParseFathom(save, 'antid');
-    $('#balorg_thralls') = ParseFathom(save, 'balorg');
-    $('#centaur_thralls') = ParseFathom(save, 'centaur');
-    $('#mantis_thralls') = ParseFathom(save, 'mantis');
-    $('#orc_thralls') = ParseFathom(save, 'orc');
-    $('#penguicula_thralls') = ParseFathom(save, 'penguicula');
-    $('#rhinotaur_thralls') = ParseFathom(save, 'rhinotaur');
-    $('#scorpid_thralls') = ParseFathom(save, 'scorpid');
-    $('#sharkin_thralls') = ParseFathom(save, 'sharkin');
-    $('#tortosian_thralls') = ParseFathom(save, 'tortosian');
-    $('#unicorn_thralls') = ParseFathom(save, 'unicorn');
-    $('#wendigo_thralls') = ParseFathom(save, 'wendigo');
-    $('#yeti_thralls') = ParseFathom(save, 'yeti');
+    $('#channel_assault')[0].value = save.race['psychicPowers'] && save.race.psychicPowers['channel'] && save.race.psychicPowers.channel['assault'] || 0;
+
+    $('#antid_thralls')[0].value = ParseFathom(save, 'antid');
+    $('#balorg_thralls')[0].value = ParseFathom(save, 'balorg');
+    $('#centaur_thralls')[0].value = ParseFathom(save, 'centaur');
+    $('#mantis_thralls')[0].value = ParseFathom(save, 'mantis');
+    $('#orc_thralls')[0].value = ParseFathom(save, 'orc');
+    $('#penguicula_thralls')[0].value = ParseFathom(save, 'penguicula');
+    $('#rhinotaur_thralls')[0].value = ParseFathom(save, 'rhinotaur');
+    $('#scorpid_thralls')[0].value = ParseFathom(save, 'scorpid');
+    $('#sharkin_thralls')[0].value = ParseFathom(save, 'sharkin');
+    $('#tortosian_thralls')[0].value = ParseFathom(save, 'tortosian');
+    $('#unicorn_thralls')[0].value = ParseFathom(save, 'unicorn');
+    $('#wendigo_thralls')[0].value = ParseFathom(save, 'wendigo');
+    $('#yeti_thralls')[0].value = ParseFathom(save, 'yeti');
 
     $('#zealotry')[0].checked = save.tech['fanaticism'] && save.tech['fanaticism'] >= 4 ? true : false;
     $('#vrTraining')[0].checked = save.tech['boot_camp'] && save.tech['boot_camp'] >= 2 ? true : false;
@@ -947,7 +951,7 @@ function GroupRow(containerQuery, rowQuery) {
 
 $(document).ready( function() {
     GroupRow("#cTraits", "#traitsRow");
-    GroupRow("#cThralls", "#thrallsRow");
+    GroupRow("#cEldritch", "#thrallsRow");
     $('#cTraits')[0].hidden = false;
    
     $('#paramsForm').submit(function(event) {

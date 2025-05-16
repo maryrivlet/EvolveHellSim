@@ -1134,6 +1134,13 @@ function ArmyRating(params, sim, size, wound) {
     if (params.rage) {
         rating *= 1.05;
     }
+    if (params.psychic) {
+        let boost = 0;
+        if (params.channel_assault) {
+            boost += +(TraitSelect(params.psychic, 15, 20, 30, 40, 50, 60, 65) / 50000 * params.nightmare * params.channel_assault).toFixed(3);
+        }
+        rating *= 1 + boost;
+    }
     if (params.government == "autocracy") {
         if (params.governor == "bureaucrat") {
             rating *= 1.40;
