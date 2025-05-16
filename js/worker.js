@@ -413,6 +413,9 @@ function BloodWar(params, sim, stats) {
             if (params.chicken) {
                 ambushOdds -= TraitSelect(params.chicken, 22, 20, 15, 10, 8, 6, 4);
             }
+            if (params.ocularPower && params.ocular_fear) {
+                ambushOdds += TraitSelect(params.ocularPower, 0, 1, 2, 2, 3, 4, 5);
+            }
             
             if (Rand(0, ambushOdds) == 0) {
                 /* Ambush 
@@ -1155,6 +1158,9 @@ function ArmyRating(params, sim, size, wound) {
     }
     if (params.elemental) {
         rating *= TraitSelect(params.elemental, 1.01, 1.02, 1.04, 1.06, 1.08, 1.1, 1.2);
+    }
+    if (params.ocularPower && params.ocular_disintegration) {
+        rating *= TraitSelect(params.ocularPower, 1.05, 1.125, 1.25, 1.375, 1.5, 1.625, 1.75);
     }
     if (params.psychic) {
         let boost = 0;

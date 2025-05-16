@@ -448,6 +448,23 @@
         <div class="form-group col-sm">
           <div class="input-group input-group-sm">
             <div class="input-group-prepend">
+              <span class="input-group-text">Ocular Power (Eye-Spector)</span>
+            </div>
+            <select class="form-control form-control-sm hell-sim-param" id="ocularPower">
+              <option value=0 selected>None</option>
+              <option value=0.1>Rank 0.1</option>
+              <option value=0.25>Rank 0.25</option>
+              <option value=0.5>Rank 0.5</option>
+              <option value=1>Rank 1</option>
+              <option value=2>Rank 2</option>
+              <option value=3>Rank 3</option>
+              <option value=4>Rank 4</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group col-sm">
+          <div class="input-group input-group-sm">
+            <div class="input-group-prepend">
               <span class="input-group-text">Ooze (Sludge)</span>
             </div>
             <select class="form-control form-control-sm hell-sim-param" id="ooze">
@@ -722,6 +739,16 @@
 
     <h5><span id="hEldritch" class="collapser" data-target="#cEldritch">Eldritch Powers <span id="hEldritchStatus" class="collapser-icon">-</span></span></h5>
     <div id="cEldritch" class="form-group">
+      <div class="form-row mb-2">
+        <div class="col-auto">
+          <input class="form-check-input ml-3 hell-sim-param" type="checkbox" id="ocular_disintegration">
+          <label class="form-check-label" for="ocular_disintegration">Ocular Disintegration</label>
+        </div>
+        <div class="col-auto">
+          <input class="form-check-input ml-3 hell-sim-param" type="checkbox" id="ocular_fear">
+          <label class="form-check-label" for="ocular_fear">Ocular Fear</label>
+        </div>
+      </div>
       <div class="form-row">
         <div class="form-group col-sm">
           <div class="input-group input-group-sm">

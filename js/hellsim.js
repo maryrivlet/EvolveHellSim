@@ -582,7 +582,7 @@ function OnChange() {
     ShowMercOptions();
     
     /* Show eldritch things only when needed */
-    let eldritch = gParams.unfathomable > 0 || gParams.psychic > 0;
+    let eldritch = gParams.unfathomable > 0 || gParams.psychic > 0 || gParams.ocularPower > 0;
     if (eldritch) {
         $('#hEldritch').parent()[0].hidden = false;
         $('#cEldritch')[0].hidden = false;
@@ -802,6 +802,7 @@ function ConvertSave(save) {
     $('#hyper')[0].value = save.race['hyper'] || 0;
     $('#instincts')[0].value = save.race['instinct'] || 0;
     $('#kindling')[0].value = save.race['kindling_kindred'] || 0;
+    $('#ocularPower')[0].value = save.race['ocular_power'] || 0;
     $('#ooze')[0].value = save.race['ooze'] || 0;
     $('#parasite')[0].value = save.race['parasite'] || 0;
     $('#pathetic')[0].value = save.race['pathetic'] || 0;
@@ -822,6 +823,9 @@ function ConvertSave(save) {
     $('#nightmare')[0].value =  save.stats.achieve['nightmare'] && save.stats.achieve.nightmare['mg'] || 0;
     $('#torturers')[0].value = save.civic['torturer'] && save.civic['torturer'].assigned || 0;
     $('#channel_assault')[0].value = save.race['psychicPowers'] && save.race.psychicPowers['channel'] && save.race.psychicPowers.channel['assault'] || 0;
+
+    $('#ocular_disintegration')[0].checked = save.race['ocularPowerConfig'] && save.race.ocularPowerConfig['d'] ? true : false;
+    $('#ocular_fear')[0].checked = save.race['ocularPowerConfig'] && save.race.ocularPowerConfig['f'] ? true : false;
 
     $('#antid_thralls')[0].value = ParseFathom(save, 'antid');
     $('#balorg_thralls')[0].value = ParseFathom(save, 'balorg');
