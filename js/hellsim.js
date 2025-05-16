@@ -796,6 +796,7 @@ function ConvertSave(save) {
     $('#evil')[0].value = save.race['evil'] || 0;
     $('#fiery')[0].value = save.race['fiery'] || 0;
     $('#ghostly')[0].value = save.race['ghostly'] || 0;
+    $('#grenadier')[0].value = save.race['grenadier'] || 0;
     $('#highPop')[0].value = save.race['high_pop'] || 0;
     $('#hivemind')[0].value = save.race['hivemind'] || 0;
     $('#holy')[0].value = save.race['holy'] || 0;
@@ -818,6 +819,7 @@ function ConvertSave(save) {
     $('#smoldering')[0].value = save.race['smoldering'] || 0;
     $('#sniper')[0].value = save.race['sniper'] || 0;
     $('#sticky')[0].value = save.race['sticky'] || 0;
+    $('#swift')[0].value = save.race['swift'] || 0;
     $('#unfathomable')[0].value = save.race['unfathomable'] || 0;
 
     $('#nightmare')[0].value =  save.stats.achieve['nightmare'] && save.stats.achieve.nightmare['mg'] || 0;

@@ -1126,6 +1126,9 @@ function ArmyRating(params, sim, size, wound) {
     if (params.sharkin_thralls) {
         rating *= 1 + 0.3 * Fathom(params, params.sharkin_thralls);
     }
+    if (params.swift) {
+        rating *= TraitSelect(params.swift, 1.2, 1.35, 1.55, 1.75, 1.85, 1.9, 1.92);
+    }
     if (params.fiery) {
         rating *= TraitSelect(params.fiery, 1.2, 1.3, 1.4, 1.65, 1.7, 1.72, 1.74);
     }
@@ -1168,6 +1171,9 @@ function ArmyRating(params, sim, size, wound) {
             boost += +(TraitSelect(params.psychic, 15, 20, 30, 40, 50, 60, 65) / 50000 * params.nightmare * params.channel_assault).toFixed(3);
         }
         rating *= 1 + boost;
+    }
+    if (params.grenadier) {
+        rating *= TraitSelect(params.grenadier, 2, 2.1, 2.25, 2.5, 2.75, 3, 3.25);
     }
     if (params.government == "autocracy") {
         if (params.governor == "bureaucrat") {
