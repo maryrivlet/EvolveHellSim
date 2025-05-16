@@ -1153,6 +1153,9 @@ function ArmyRating(params, sim, size, wound) {
     if (params.rage) {
         rating *= 1.05;
     }
+    if (params.elemental) {
+        rating *= TraitSelect(params.elemental, 1.01, 1.02, 1.04, 1.06, 1.08, 1.1, 1.2);
+    }
     if (params.psychic) {
         let boost = 0;
         if (params.channel_assault) {
