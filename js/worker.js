@@ -954,7 +954,7 @@ function HealSoldiers(params, sim, stats) {
     }
     healed += Math.floor(healCredits / healCost);
     healCredits = healCredits % healCost;
-    if (Rand(0, healCredits) > Rand(0, healCost)) {
+    if (Rand(0, healCost) < healCredits) {
         healed++;
     }
     
