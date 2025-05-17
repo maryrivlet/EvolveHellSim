@@ -353,6 +353,9 @@ function BloodWar(params, sim, stats) {
     if (params.wendigo_thralls) {
         gemOdds = Math.round(gemOdds * (0.01 * (100 - 10 * Fathom(params, params.wendigo_thralls))));
     }
+    if (gemOdds < 12) {
+        gemOdds = 12;
+    }
     
     /* Patrols */
     let soldiersKilled = 0;
