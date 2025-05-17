@@ -29,20 +29,12 @@
     </div>
   </div>
   <form id="paramsForm">
-    <h5><span id="hTraits" class="collapser" data-target="#cTraits">Traits <span id="hTraitsStatus" class="collapser-icon">-</span></span></h5>
-    <div id="cTraits" class="form-group" hidden>
+    <h5><span id="hGeneral" class="collapser" data-target="#cGeneral">General <span id="hGeneralStatus" class="collapser-icon">-</span></span></h5>
+    <div id="cGeneral" class="form-group">
       <div class="form-row mb-2">
-        <div class="col-auto">
-          <input class="form-check-input ml-3 hell-sim-param" type="checkbox" id="aquatic">
-          <label class="form-check-label" for="aquatic">Aquatic (Genus)</label>
-        </div>
         <div class="col-auto">
           <input class="form-check-input ml-3 hell-sim-param" type="checkbox" id="banana">
           <label class="form-check-label" for="banana">Banana Republic ⭐</label>
-        </div>
-        <div class="col-auto">
-          <input class="form-check-input ml-3 hell-sim-param" type="checkbox" id="magic">
-          <label class="form-check-label" for="magic">Magic (Universe)</label>
         </div>
         <div class="col-auto">
           <input class="form-check-input ml-3 hell-sim-param" type="checkbox" id="rage">
@@ -51,6 +43,63 @@
         <div class="col-auto">
           <input class="form-check-input ml-3 hell-sim-param" type="checkbox" id="technophobe">
           <label class="form-check-label" for="technophobe">Technophobe 🏆</label>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group col-sm">
+          <div class="input-group input-group-sm">
+            <div class="input-group-prepend">
+              <span class="input-group-text">Universe</span>
+            </div>
+            <select class="form-control form-control-sm hell-sim-param" id="universe">
+              <option value="standard" selected>Standard</option>
+              <option value="heavy">Heavy Gravity</option>
+              <option value="antimatter">Antimatter</option>
+              <option value="evil">Evil</option>
+              <option value="micro">Micro</option>
+              <option value="magic">Magic</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group col-sm">
+          <div class="input-group input-group-sm">
+            <div class="input-group-prepend">
+              <span class="input-group-text">Dark Energy</span>
+            </div>
+            <input class="form-control form-control-sm hell-sim-param" id="dark_energy" value="0" type="number" style="text-align: right">
+          </div>
+        </div>
+        <div class="form-group col-sm">
+          <div class="input-group input-group-sm">
+            <div class="input-group-prepend">
+              <span class="input-group-text">Harmony Crystals</span>
+            </div>
+            <input class="form-control form-control-sm hell-sim-param" id="harmony" value="0" type="number" style="text-align: right">
+          </div>
+        </div>
+        <div class="form-group col-sm">
+          <div class="input-group input-group-sm">
+            <div class="input-group-prepend">
+              <span class="input-group-text">Lemon Cleaner (Evil) 🏆</span>
+            </div>
+            <select class="form-control form-control-sm hell-sim-param" id="evil_lemon">
+              <option value=0 selected>Unachieved</option>
+              <option value=1>No Star</option>
+              <option value=2>Plain Star</option>
+              <option value=3>Bronze Star</option>
+              <option value=4>Silver Star</option>
+              <option value=5>Gold Star</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+    <h5><span id="hTraits" class="collapser" data-target="#cTraits">Traits <span id="hTraitsStatus" class="collapser-icon">-</span></span></h5>
+    <div id="cTraits" class="form-group" hidden>
+      <div class="form-row mb-2">
+        <div class="col-auto">
+          <input class="form-check-input ml-3 hell-sim-param" type="checkbox" id="aquatic">
+          <label class="form-check-label" for="aquatic">Aquatic (Genus)</label>
         </div>
       </div>
       <div id="traitsRow" class="form-row">
@@ -1111,9 +1160,9 @@
         <div class="form-group col-sm">
           <div class="input-group input-group-sm">
             <div class="input-group-prepend">
-              <span class="input-group-text">Evil Dark Energy</span>
+              <span class="input-group-text">Authority</span>
             </div>
-            <input class="form-control form-control-sm hell-sim-param" id="darkEnergy" value="0" type="number" step="0.001" style="text-align: right">
+            <input class="form-control form-control-sm hell-sim-param" id="authority" value="0" type="number" style="text-align: right">
           </div>
         </div>
       </div>

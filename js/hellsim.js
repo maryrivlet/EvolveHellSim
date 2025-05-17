@@ -591,9 +591,6 @@ function OnChange() {
         $('#cEldritch')[0].hidden = true;
     }
     
-    /* Round dark energy to 3 places */
-    $('#darkEnergy')[0].value = gParams.darkEnergy = +gParams.darkEnergy.toFixed(3);
-    
     /* Manage collapsers */
     $('.collapser-icon').each(function(index, element) {
         var el = $(element);
@@ -774,11 +771,16 @@ function ConvertSave(save) {
     console.log(save);
     
     /* Fill form fields based on Evolve save data */
-    $('#aquatic')[0].checked = (save.race.species == "sharkin" || save.race.species == "octigoran");
+    $('#universe')[0].value = save.race.universe;
+    $('#dark_energy')[0].value = save.prestige && save.prestige.Dark.count || 0;
+    $('#harmony')[0].value = save.prestige && save.prestige.Harmony.count || 0;
+    $('#evil_lemon')[0].value =  save.stats.achieve['extinct_sludge'] && save.stats.achieve.extinct_sludge['e'] || 0;
+    
     $('#banana')[0].checked = save.race['banana'] ? true : false;
-    $('#magic')[0].checked = save.race.universe == 'magic' ? true : false;
     $('#rage')[0].checked = save.city.ptrait.includes('rage') ? true : false;
     $('#technophobe')[0].checked = save.stats.achieve['technophobe'] && save.stats.achieve.technophobe.l >= 5 ? true : false;
+    
+    $('#aquatic')[0].checked = (save.race.species == "sharkin" || save.race.species == "octigoran");
     $('#apexPredator')[0].value = save.race['apex_predator'] || 0;
     $('#armored')[0].value = save.race['armored'] || 0;
     $('#artifical')[0].value = save.race['artifical'] || 0;
@@ -859,14 +861,12 @@ function ConvertSave(save) {
     $('#turretTech')[0].value = save.tech['turret'] || 0;
     $('#tactical')[0].value = save.race['tactical'] || 0;
     $('#temples')[0].value = save.city.temple ? save.city.temple.count : 0;
+    $('#authority')[0].value = save.resource['Authority'] && save.resource['Authority'].amount || 0;
     $('#government')[0].value = save.civic.govern.type || 'anarchy';
     $('#governor')[0].value = save.race['governor'] && save.race.governor['g'] ? save.race.governor.g.bg : 'none';
     $('#bootCamps')[0].value = save.city.boot_camp ? save.city.boot_camp.count : 0;
     $('#hospitals')[0].value = save.city.hospital ? save.city.hospital.count : 0;
     $('#fibroblast')[0].value = save.race['fibroblast'] || 0;
-    let dark = save.prestige ? save.prestige.Dark.count : 0;
-    dark *= 1 + ((save.prestige ? save.prestige.Harmony.count : 0) * 0.01);
-    $('#darkEnergy')[0].value = save.race.universe == 'evil' ? dark.toFixed(3) : 0;
     $('#warRitual')[0].value = save.race['casting'] ? save.race.casting.army : 0;
     $('#bloodLust')[0].value = save['blood'] && save.blood['lust'] ? save.blood.lust : 0;
     $('#soulTrap')[0].value = save['blood'] && save.blood['attract'] ? save.blood.attract : 0;

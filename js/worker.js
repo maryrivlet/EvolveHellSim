@@ -343,9 +343,6 @@ function BloodWar(params, sim, stats) {
     /* Gem Chance */
     let gemOdds = params.technophobe ? 9000 : 10000;
     gemOdds -= sim.pity;
-    if (params.darkEnergy >= 1) {
-        gemOdds -= Math.round(Math.log2(params.darkEnergy) * 2);
-    }
     gemOdds = Math.round(gemOdds * (0.948 ** params.beacons));
     if (params.ghostly) {
         gemOdds = Math.round(gemOdds * TraitSelect(params.ghostly, 0.98, 0.95, 0.9, 0.85, 0.8, 0.78, 0.77));
@@ -577,6 +574,9 @@ function BloodWar(params, sim, stats) {
         if (params.chicken) {
             influx *= TraitSelect(params.chicken, 2.1, 2, 1.75, 1.5, 1.4, 1.3, 1.2);
         }
+        if (params.universe == "evil") {
+            influx *= 1.1;
+        }
         influx = Math.round(influx);
         sim.threat += Rand(influx * 10, influx * 50);
     }
@@ -702,10 +702,11 @@ function BloodWar(params, sim, stats) {
 function Events(params, sim, stats) {    
     if (Rand(0, sim.eventOdds) == 0) {
         let events = [
+            "inspiration",
+            "motivation",
             "surge",
             "terrorist",
-            "ruins",
-            "inspiration"
+            "ruins"
         ];
         
         if (!(params.kindling || params.smoldering || params.evil || params.aquatic)) {
@@ -1185,6 +1186,22 @@ function ArmyRating(params, sim, size, wound) {
             rating *= 1.35;
         }
     }
+    if (params.universe == "evil") {
+        if (params.authority > 100) {
+            let dark = params.dark_energy;
+            if (params.harmony > 0) {
+                dark *= 1 + params.harmony * 0.01;
+            }
+            if (params.evil_lemon) {
+                dark *= 1 + params.evil_lemon * 0.03;
+            }
+            let boost = (params.authority - 100) / params.authority * 0.75;
+            boost *= 1 + ((Math.log2(10 + dark) - 3.321928094887362) / 10);
+            rating *= 1 + boost;
+        } else {
+            rating *= params.authority / 100;
+        }
+    }
 
     rating = Math.floor(rating);
 
@@ -1212,7 +1229,7 @@ function ArmyRating(params, sim, size, wound) {
     if (params.government == "democracy") {
         racialModifier *= 0.95;
     }
-    if (params.magic) {
+    if (params.universe == "magic") {
         racialModifier *= 0.75;
         if (params.warRitual) {
             racialModifier *= 1 + (params.warRitual / (params.warRitual + 75));
