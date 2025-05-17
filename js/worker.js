@@ -593,7 +593,7 @@ function BloodWar(params, sim, stats) {
     if (sim.surveyors > 0) {
         let divisor = 1000;
         if (params.governor == "sports") {
-            divisor *= 1.10;
+            divisor *= params.bureaucratic_efficiency ? 1.20 : 1.10;
         }
         if (params.blurry) {
             divisor *= TraitSelect(params.blurry, 1.05, 1.10, 1.15, 1.25, 1.35, 1.4, 1.45);
@@ -1038,7 +1038,7 @@ function TrainingTime(params) {
     bootCampBonus = params.vrTraining == true ? 0.08 : 0.05;
     bootCampBonus += params.bloodLust * 0.002;
     if (params.governor == "soldier") {
-        bootCampBonus *= 1.25;
+        bootCampBonus *= params.bureaucratic_efficiency ? 1.3 : 1.25;
     }
     
     /* rate is percentage points per tick */
@@ -1171,7 +1171,7 @@ function ArmyRating(params, sim, size, wound) {
         rating *= 1 + Math.round((params.astroWish ? 12 : 10) * AstroMod(params)) / 100;
     }
     if (params.governor == "soldier") {
-        rating *= 1.05;
+        rating *= params.bureaucratic_efficiency ? 1.3 : 1.25;
     }
     if (params.rage) {
         rating *= 1.05;
