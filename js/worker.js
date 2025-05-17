@@ -1293,6 +1293,10 @@ function ArmyRating(params, sim, size, wound) {
         }
     }
 
+    if (rating <= 0 && size > 0) {
+        rating = 0.01;
+    }
+
     return rating;
 }
 
