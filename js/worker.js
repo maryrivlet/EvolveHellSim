@@ -1252,7 +1252,7 @@ function ArmyRating(params, sim, size, wound) {
     let racialModifier = 1;
     if (params.hivemind) {
         let breakpoint = TraitSelect(params.hivemind, 13, 12, 11, 10, 8, 7, 6);
-        if (size <= 10) {
+        if (size <= breakpoint) {
             racialModifier *= (size * 0.05) + (1 - breakpoint * 0.05);
         } else {
             racialModifier *= 1 + (1 - (0.99 ** (size - breakpoint)));
