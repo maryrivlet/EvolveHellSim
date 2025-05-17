@@ -107,6 +107,20 @@
             </select>
           </div>
         </div>
+        <div class="form-group col-sm">
+          <div class="input-group input-group-sm">
+            <div class="input-group-prepend">
+              <span class="input-group-text">Astrology</span>
+            </div>
+            <select class="form-control form-control-sm hell-sim-param" id="astrology">
+              <option value="current" selected>Current</option>
+              <option value="aries">♈︎ Aries</option>
+              <option value="cancer">♋︎ Cancer</option>
+              <option value="pisces">♓︎ Pisces</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+        </div>
       </div>
     </div>
     <h5><span id="hTraits" class="collapser" data-target="#cTraits">Traits <span id="hTraitsStatus" class="collapser-icon">-</span></span></h5>
@@ -124,6 +138,23 @@
               <span class="input-group-text">Apex Predator (Sharkin)</span>
             </div>
             <select class="form-control form-control-sm hell-sim-param" id="apexPredator">
+              <option value=0 selected>None</option>
+              <option value=0.1>Rank 0.1</option>
+              <option value=0.25>Rank 0.25</option>
+              <option value=0.5>Rank 0.5</option>
+              <option value=1>Rank 1</option>
+              <option value=2>Rank 2</option>
+              <option value=3>Rank 3</option>
+              <option value=4>Rank 4</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group col-sm">
+          <div class="input-group input-group-sm">
+            <div class="input-group-prepend">
+              <span class="input-group-text">Astrologer (Slitheryn)</span>
+            </div>
+            <select class="form-control form-control-sm hell-sim-param" id="astrologer">
               <option value=0 selected>None</option>
               <option value=0.1>Rank 0.1</option>
               <option value=0.25>Rank 0.25</option>
@@ -832,6 +863,23 @@
             </select>
           </div>
         </div>
+        <div class="form-group col-sm">
+          <div class="input-group input-group-sm">
+            <div class="input-group-prepend">
+              <span class="input-group-text">Unfavored (Kamel)</span>
+            </div>
+            <select class="form-control form-control-sm hell-sim-param" id="unfavored">
+              <option value=0 selected>None</option>
+              <option value=0.1>Rank 0.1</option>
+              <option value=0.25>Rank 0.25</option>
+              <option value=0.5>Rank 0.5</option>
+              <option value=1>Rank 1</option>
+              <option value=2>Rank 2</option>
+              <option value=3>Rank 3</option>
+              <option value=4>Rank 4</option>
+            </select>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -1039,6 +1087,10 @@
         <div class="col-auto">
           <input class="form-check-input ml-3 hell-sim-param" type="checkbox" id="advGuns">
           <label class="form-check-label" for="advGuns">Adv. Gun Emplacements</label>
+        </div>
+        <div class="col-auto">
+          <input class="form-check-input ml-3 hell-sim-param" type="checkbox" id="astroWish">
+          <label class="form-check-label" for="astroWish">Astrology Wish</label>
         </div>
       </div>
       <div class="form-row">

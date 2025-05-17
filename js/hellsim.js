@@ -36,6 +36,11 @@ function Simulate() {
        Shallow copy should be fine */
     gSim.params = Object.assign({}, gParams);
     
+    /* Recalculate current astrological sign */
+    if (gSim.params.astrology == 'current') {
+        gSim.params.astrology = GetStarSign();
+    }
+    
     gSim.stats = InitStats(gSim.params);
     gSim.startTime = Date.now();
     gSim.progress = 0;
@@ -783,6 +788,7 @@ function ConvertSave(save) {
     
     $('#aquatic')[0].checked = (save.race.species == "sharkin" || save.race.species == "octigoran");
     $('#apexPredator')[0].value = save.race['apex_predator'] || 0;
+    $('#astrologer')[0].value = save.race['astrologer'] || 0;
     $('#armored')[0].value = save.race['armored'] || 0;
     $('#artifical')[0].value = save.race['artifical'] || 0;
     $('#beast')[0].value = save.race['beast'] || 0;
@@ -824,6 +830,7 @@ function ConvertSave(save) {
     $('#sticky')[0].value = save.race['sticky'] || 0;
     $('#swift')[0].value = save.race['swift'] || 0;
     $('#unfathomable')[0].value = save.race['unfathomable'] || 0;
+    $('#unfavored')[0].value = save.race['unfavored'] || 0;
 
     $('#nightmare')[0].value =  save.stats.achieve['nightmare'] && save.stats.achieve.nightmare['mg'] || 0;
     $('#torturers')[0].value = save.civic['torturer'] && save.civic['torturer'].assigned || 0;
@@ -856,6 +863,7 @@ function ConvertSave(save) {
     $('#soulAbsorption')[0].checked = save.tech['hell_pit'] && save.tech['hell_pit'] >= 6 ? true : false;
     $('#soulLink')[0].checked = save.tech['hell_pit'] && save.tech['hell_pit'] >= 7 ? true : false;
     $('#advGuns')[0].checked = save.tech['hell_gun'] && save.tech['hell_gun'] >= 2 ? true : false;
+    $('#astroWish')[0].checked = save.race['wishStats'] && save.race.wishStats['astro'] ? true : false;
 
     $('#weaponTech')[0].value = save.tech['military'] ? (save.tech['military'] >= 5 ? save.tech['military'] - 1 : save.tech['military']) : 0;
     $('#armorTech')[0].value = save.tech['armor'] || 0;
@@ -958,6 +966,19 @@ function GroupRow(containerQuery, rowQuery) {
     while (i % 5 != 0) {
         newRow.append('<div class="form-group col-sm"></div>');
         i++;
+    }
+}
+
+function GetStarSign() {
+    let date = new Date();
+    if (date.getMonth() === 1 && date.getDate() >= 19 || date.getMonth() == 2 && date.getDate() <= 20) {
+        return 'pisces';
+    } else if (date.getMonth() == 2 && date.getDate() >= 21 || date.getMonth() == 3 && date.getDate() <= 19) {
+        return 'aries';
+    } else if (date.getMonth() == 5 && date.getDate() >= 22 || date.getMonth() == 6 && date.getDate() <= 22) {
+        return 'cancer';
+    } else {
+        return 'other';
     }
 }
 

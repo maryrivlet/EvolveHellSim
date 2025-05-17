@@ -762,6 +762,9 @@ function Events(params, sim, stats) {
         
         /* Reset event odds */
         sim.eventOdds = 999;
+        if (params.astrology == "pisces") {
+            sim.eventOdds -= Math.round((params.astroWish ? 79 : 49) * AstroMod(params));
+        }
     } else {
         /* No event, increase the odds */
         sim.eventOdds--;
@@ -907,6 +910,9 @@ function HealSoldiers(params, sim, stats) {
     var healCredits = params.hospitals;
     if (params.artifical) {
         healCredits = params.bootCamps;
+    }
+    if (params.astrology == "cancer") {
+        healCredits = Math.max(0, healCredits + Math.round((params.astroWish ? 8 : 5) * AstroMod(params)));
     }
     if (params.bacTanks) {
         healCredits *= 2;
@@ -1162,6 +1168,9 @@ function ArmyRating(params, sim, size, wound) {
     if (params.banana) {
         rating *= 0.8;
     }
+    if (params.astrology == "aries") {
+        rating *= 1 + Math.round((params.astroWish ? 12 : 10) * AstroMod(params)) / 100;
+    }
     if (params.governor == "soldier") {
         rating *= 1.05;
     }
@@ -1341,6 +1350,22 @@ function TraitSelect(trait_rank, rank_tenth, rank_quarter, rank_half, rank_1, ra
         case 4:
             return rank_4;
     }
+}
+
+function AstroMod(params) {
+    let mod = 1;
+    if (params.astrologer) {
+        let bonus = TraitSelect(params.astrologer, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7);
+        if (params.unfavored) {
+            mod -= bonus;
+        } else {
+            mod += bonus;
+        }
+    }
+    if (params.unfavored) {
+        mod *= TraitSelect(params.unfavored, -1.75, -1.5, -1.25, -1, -0.75, -0.5, -0.25);
+    }
+    return mod;
 }
 
 function Fathom(params, thralls) {
