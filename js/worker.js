@@ -1131,13 +1131,7 @@ function ArmyRating(params, sim, size, wound) {
     }
     if (params.cautious && sim && sim.weather == 0) {
         /* Note: old simplified weather was Rand(0, 1000) < 216 */
-        if (sim) {
-            /* Not doing a full weather sim here, but it rains about 21.6% of the time
-               in most biomes */
-            if (Rand(0, 1000) < 216) {
-                rating *= TraitSelect(params.cautious, 0.84, 0.86, 0.88, 0.9, 0.92, 0.94, 0.96);
-            }
-        }
+        rating *= TraitSelect(params.cautious, 0.84, 0.86, 0.88, 0.9, 0.92, 0.94, 0.96);
     }
 
     if (params.apexPredator) {
@@ -1215,7 +1209,7 @@ function ArmyRating(params, sim, size, wound) {
             default:
                 break;
         }
-        if (sim.weather == 0 && sim.temp > 0) {
+        if (sim && sim.weather == 0 && sim.temp > 0) {
             moisture += 10;
         }
         rating *= 1 + Math.round(moisture * TraitSelect(params.tusk, 0.4, 0.5, 0.75, 1, 1.2, 1.4, 1.6)) / 100 / 2;
