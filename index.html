@@ -41,6 +41,10 @@
           <label class="form-check-label" for="rage">Rage (Planet)</label>
         </div>
         <div class="col-auto">
+          <input class="form-check-input ml-3 hell-sim-param" type="checkbox" id="elliptical">
+          <label class="form-check-label" for="elliptical">Elliptical</label>
+        </div>
+        <div class="col-auto">
           <input class="form-check-input ml-3 hell-sim-param" type="checkbox" id="technophobe">
           <label class="form-check-label" for="technophobe">Technophobe 🏆</label>
         </div>
@@ -119,6 +123,35 @@
               <option value="pisces">♓︎ Pisces</option>
               <option value="other">Other</option>
             </select>
+          </div>
+        </div>
+        <div class="form-group col-sm">
+          <div class="input-group input-group-sm">
+            <div class="input-group-prepend">
+              <span class="input-group-text">Biome</span>
+            </div>
+            <select class="form-control form-control-sm hell-sim-param" id="biome">
+              <option value="ashland">Ashland</option>
+              <option value="desert">Desert</option>
+              <option value="eden">Eden</option>
+              <option value="forest">Forest</option>
+              <option value="grassland" selected>Grassland</option>
+              <option value="hellscape">Hellscape</option>
+              <option value="oceanic">Oceanic</option>
+              <option value="savanna">Savanna</option>
+              <option value="swamp">Swamp</option>
+              <option value="tundra">Tundra</option>
+              <option value="taiga">Taiga</option>
+              <option value="volcanic">Volcanic</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group col-sm">
+          <div class="input-group input-group-sm">
+            <div class="input-group-prepend">
+              <span class="input-group-text">Orbital Period</span>
+            </div>
+            <input class="form-control form-control-sm hell-sim-param" id="orbit" value="365" type="number" min="10" style="text-align: right">
           </div>
         </div>
       </div>

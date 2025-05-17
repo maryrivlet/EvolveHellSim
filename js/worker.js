@@ -82,6 +82,9 @@ function SimStart(id, simId, params, stats) {
         money: params.moneyCap,
         mercCounter: 0,
         clickerCounter: 0,
+        day: Rand(0, params.orbit),
+        temp: 1,
+        weather: 0,
         lastEvent: -1,
         progress: 0,
         done: false
@@ -148,6 +151,10 @@ function SimRun(sim, params, stats) {
     
     while (sim.tick < sim.ticks) {
         if (sim.tick % ticks_per_bloodwar == 0) {
+            if (params.cautious) {
+                UpdateWeather(sim, params, stats);
+            }
+            
             /* Fight demons */
             BloodWar(params, sim, stats);
             
@@ -1122,16 +1129,14 @@ function ArmyRating(params, sim, size, wound) {
     if (params.chameleon) {
         rating *= TraitSelect(params.chameleon, 1.03, 1.05, 1.1, 1.2, 1.25, 1.3, 1.35);
     }
-    if (params.cautious) {
+    if (params.cautious && sim && sim.weather == 0) {
+        /* Note: old simplified weather was Rand(0, 1000) < 216 */
         if (sim) {
             /* Not doing a full weather sim here, but it rains about 21.6% of the time
                in most biomes */
             if (Rand(0, 1000) < 216) {
                 rating *= TraitSelect(params.cautious, 0.84, 0.86, 0.88, 0.9, 0.92, 0.94, 0.96);
             }
-        } else {
-            /* Average multiplier */
-            rating *= (1 - 0.216) * 1 + 0.216 * TraitSelect(params.cautious, 0.84, 0.86, 0.88, 0.9, 0.92, 0.94, 0.96);
         }
     }
 
@@ -1374,6 +1379,142 @@ function Fathom(params, thralls) {
         active -= Math.ceil((active - params.torturers) / 3);
     }
     return (active / 100) * (params.nightmare / 5);
+}
+
+function UpdateWeather(sim, params, stats) {
+    sim.day++;
+    if (sim.day >= params.orbit) {
+        sim.day = 0;
+    }
+    
+    /* TODO: cata / decay */
+    
+    if (Rand(0, 5) == 0) {
+    
+        let season = 0;
+        if (params.elliptical) {
+            season = Math.floor(sim.day / Math.round(params.orbit / 6));
+            season = Math.min(3, Math.round(season * 4/6));
+        } else {
+            /* Yes, season 4 is a thing in the real game too... */
+            season = Math.floor(sim.day / Math.round(params.orbit / 4));
+        }
+        
+        let temp = Rand(0, 3);
+        let sky = Rand(0, 5);
+        /* Wind doesn't need to be simmed at the moment */
+        /* let wind = Rand(0, 3); */
+        
+        switch (params.biome) {
+            case 'oceanic':
+            case 'swamp':
+                if (sky > 0 && Rand(0, 3) == 0) {
+                    sky--;
+                }
+                break;
+            case 'tundra':
+            case 'taiga':
+                if (season == 3) {
+                    temp = 0;
+                } else if (temp > 0 && Rand(0, 2) == 0) {
+                    temp--;
+                }
+                break;
+            case 'desert':
+                if (sky < 4 && Rand(0, 2) == 0) {
+                    sky++;
+                }
+                break;
+            case 'ashland':
+                if (Rand(0, 2) == 0) {
+                    if (sky < 1) {
+                        sky++;
+                    } else if (sky > 2) {
+                        sky--;
+                    }
+                }
+                /* Falls through */
+            case 'volcanic':
+                if (season == 1) {
+                    temp = 2;
+                } else if (temp < 2 && Rand(0, 2) == 0) {
+                    /* Permafrost check -- ashland / volcanic can't be permafrost? */
+                    temp++;
+                }
+                break;
+            default:
+                break;
+        }
+        
+        switch (season) {
+            case 0:
+                if (sky > 0 && Rand(0, 3) == 0) {
+                    sky--;
+                }
+                break;
+            case 1:
+                if (temp < 2 && Rand(0, 3) == 0) {
+                    temp++;
+                }
+                break;
+            case 2:
+                /* Skip wind
+                if (wind > 0 && Rand(0, 3) == 0) {
+                    wind--;
+                }
+                */
+                break;
+            case 3:
+                if (temp > 0 && Rand(0, 3) == 0) {
+                    temp--;
+                }
+                break;
+            default:
+                break;
+        }
+        
+        /* Skip wind
+        if (params.stormy && wind > 0 && Rand(0, 2) == 0) {
+            // rejuvenated also affects wind here
+            wind--;
+        }
+        */
+        
+        if (sky == 0) {
+            sim.weather = 0;
+        } else if (sky >= 1 && sky <= 2) {
+            sim.weather = 1;
+        } else {
+            sim.weather = 2;
+            /* Don't sim darkness, as weather 2 and weather 1 are the same for our purposes...
+            
+            if (params.darkness) {
+                if (Rand(0, 7 - TraitSelect( params.darkness, 0, 1, 2, 3, 4, 5, 6 )) == 0) {
+                    sim.weather = 1;
+                }
+            }
+            */
+        }
+        
+        if (temp == 0) {
+            let min_temp = 0;
+            if (season == 1 || params.biome == 'hellscape' || (params.biome == 'eden' && season != 3)) {
+                /* Permafrost check -- hellscape can't be permafrost? */
+                min_temp = 1;
+            }
+            sim.temp = Math.max(min_temp, sim.temp - 1);
+        } else if (temp == 2) {
+            let max_temp = 2;
+            if (season == 3 || (params.biome == 'eden' && season != 1)) {
+                max_temp = 1;
+            }
+            sim.temp = Math.min(max_temp, sim.temp + 1);
+        }
+    }
+    
+    if (sim.weather == 0) {
+        stats.rainy++;
+    }
 }
 
 function Rand(min, max) {

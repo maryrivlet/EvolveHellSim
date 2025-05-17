@@ -117,6 +117,8 @@ function InitStats(params) {
         mercsHired: 0,
         maxMercPrice: 0,
         minMoney: params.moneyCap,
+        rainy: 0,
+        wet: 0,
     };
 }
 
@@ -260,6 +262,9 @@ function SimResults() {
         LogResult(stats, "Soul Forge on-time: " + ((stats.forgeOn / stats.bloodWars) * 100).toFixed(1) + "%" +
             ", souls per hour: " + (stats.forgeSouls / hours).toFixed(0) +
             "\n");
+        if (params.cautious) {
+            LogResult(stats, "Rainy time: " + ((stats.rainy / stats.bloodWars) * 100).toFixed(1) + "%\n");
+        }
         LogResult(stats, "Total sim time: " + ((Date.now() - gSim.startTime) / 1000).toFixed(1) + " seconds.  " +
             "Sim ticks per second: " + ((stats.ticks / ((Date.now() - gSim.startTime) / 1000)) / 1000).toFixed(1) + "k" +
             "\n");
@@ -781,9 +786,12 @@ function ConvertSave(save) {
     $('#harmony')[0].value = save.prestige && save.prestige.Harmony.count || 0;
     $('#evil_lemon')[0].value =  save.stats.achieve['extinct_sludge'] && save.stats.achieve.extinct_sludge['e'] || 0;
     $('#what_is_best')[0].value =  save.stats.achieve['what_is_best'] && save.stats.achieve.what_is_best['e'] || 0;
+    $('#biome')[0].value = save.city.biome;
+    $('#orbit')[0].value = save.city.calendar.orbit;
     
     $('#banana')[0].checked = save.race['banana'] ? true : false;
-    $('#rage')[0].checked = save.city.ptrait.includes('rage') ? true : false;
+    $('#rage')[0].checked = save.city['ptrait'] && save.city.ptrait.includes('rage') ? true : false;
+    $('#elliptical')[0].checked = save.city['ptrait'] && save.city.ptrait.includes('elliptical') ? true : false;
     $('#technophobe')[0].checked = save.stats.achieve['technophobe'] && save.stats.achieve.technophobe.l >= 5 ? true : false;
     
     $('#aquatic')[0].checked = (save.race.species == "sharkin" || save.race.species == "octigoran");
