@@ -775,6 +775,7 @@ function ConvertSave(save) {
     $('#dark_energy')[0].value = save.prestige && save.prestige.Dark.count || 0;
     $('#harmony')[0].value = save.prestige && save.prestige.Harmony.count || 0;
     $('#evil_lemon')[0].value =  save.stats.achieve['extinct_sludge'] && save.stats.achieve.extinct_sludge['e'] || 0;
+    $('#what_is_best')[0].value =  save.stats.achieve['what_is_best'] && save.stats.achieve.what_is_best['e'] || 0;
     
     $('#banana')[0].checked = save.race['banana'] ? true : false;
     $('#rage')[0].checked = save.city.ptrait.includes('rage') ? true : false;

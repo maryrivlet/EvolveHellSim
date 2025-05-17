@@ -690,7 +690,11 @@ function BloodWar(params, sim, stats) {
         
         let cap = params.soulAbsorption ? 750000 : 1000000;
         if (params.soulLink) {
-            cap = Math.round(cap * 0.97 ** params.soulAttractors);
+            let base = 0.97;
+            if (params.what_is_best >= 3) {
+                base = 0.96;
+            }
+            cap = Math.round(cap * base ** params.soulAttractors);
         }
         if (sim.forgeSouls > cap) {
             stats.forgeGems++;
