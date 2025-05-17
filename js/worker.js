@@ -696,9 +696,10 @@ function BloodWar(params, sim, stats) {
             }
             cap = Math.round(cap * base ** params.soulAttractors);
         }
-        if (sim.forgeSouls > cap) {
-            stats.forgeGems++;
-            sim.forgeSouls = 0;
+        if (sim.forgeSouls >= cap) {
+            let gems = Math.floor(sim.forgeSouls / cap);
+            sim.forgeSouls -= cap * gems;
+            stats.forgeGems += gems;
         }
     }
 }
