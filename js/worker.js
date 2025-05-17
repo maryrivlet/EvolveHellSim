@@ -918,6 +918,9 @@ function HealSoldiers(params, sim, stats) {
     if (params.artifical) {
         healCredits = params.bootCamps;
     }
+    if (params.rejuvenated && params.lamentis) {
+        hc += params.lamentis;
+    }
     if (params.astrology == "cancer") {
         healCredits = Math.max(0, healCredits + Math.round((params.astroWish ? 8 : 5) * AstroMod(params)));
     }
@@ -1216,6 +1219,9 @@ function ArmyRating(params, sim, size, wound) {
     }
     if (params.grenadier) {
         rating *= TraitSelect(params.grenadier, 2, 2.1, 2.25, 2.5, 2.75, 3, 3.25);
+    }
+    if (params.rejuvenated) {
+        rating *= 1.05;
     }
     if (params.government == "autocracy") {
         let bonus = (params.governor == "bureaucrat") ? 40 : 35;

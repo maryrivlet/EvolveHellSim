@@ -789,12 +789,14 @@ function ConvertSave(save) {
     $('#harmony')[0].value = save.prestige && save.prestige.Harmony.count || 0;
     $('#evil_lemon')[0].value =  save.stats.achieve['extinct_sludge'] && save.stats.achieve.extinct_sludge['e'] || 0;
     $('#what_is_best')[0].value =  save.stats.achieve['what_is_best'] && save.stats.achieve.what_is_best['e'] || 0;
+    $('#lamentis')[0].value =  save.stats.achieve['lamentis'] && save.stats.achieve.lamentis['l'] || 0;
     $('#biome')[0].value = save.city.biome;
     $('#orbit')[0].value = save.city.calendar.orbit;
     
     $('#banana')[0].checked = save.race['banana'] ? true : false;
     $('#rage')[0].checked = save.city['ptrait'] && save.city.ptrait.includes('rage') ? true : false;
     $('#elliptical')[0].checked = save.city['ptrait'] && save.city.ptrait.includes('elliptical') ? true : false;
+    $('#rejuvenated')[0].checked = save.race['rejuvenated'] ? true : false;
     $('#technophobe')[0].checked = save.stats.achieve['technophobe'] && save.stats.achieve.technophobe.l >= 5 ? true : false;
     $('#bureaucratic_efficiency')[0].checked = save['genes'] && save.genes['governor'] && save.genes.governor >= 3 ? true : false;
     

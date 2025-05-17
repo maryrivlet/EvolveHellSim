@@ -45,6 +45,10 @@
           <label class="form-check-label" for="elliptical">Elliptical</label>
         </div>
         <div class="col-auto">
+          <input class="form-check-input ml-3 hell-sim-param" type="checkbox" id="rejuvenated">
+          <label class="form-check-label" for="rejuvenated">Rejuvenated</label>
+        </div>
+        <div class="col-auto">
           <input class="form-check-input ml-3 hell-sim-param" type="checkbox" id="technophobe">
           <label class="form-check-label" for="technophobe">Technophobe 🏆</label>
         </div>
@@ -106,6 +110,21 @@
               <span class="input-group-text">What is Best? 🏆</span>
             </div>
             <select class="form-control form-control-sm hell-sim-param" id="what_is_best">
+              <option value=0 selected>Unachieved</option>
+              <option value=1>No Star</option>
+              <option value=2>Plain Star</option>
+              <option value=3>Bronze Star</option>
+              <option value=4>Silver Star</option>
+              <option value=5>Gold Star</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group col-sm">
+          <div class="input-group input-group-sm">
+            <div class="input-group-prepend">
+              <span class="input-group-text">Lamentis 🏆</span>
+            </div>
+            <select class="form-control form-control-sm hell-sim-param" id="lamentis">
               <option value=0 selected>Unachieved</option>
               <option value=1>No Star</option>
               <option value=2>Plain Star</option>
