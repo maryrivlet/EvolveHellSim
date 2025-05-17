@@ -263,7 +263,10 @@ function SimResults() {
             ", souls per hour: " + (stats.forgeSouls / hours).toFixed(0) +
             "\n");
         if (params.cautious) {
-            LogResult(stats, "Rainy time: " + ((stats.rainy / stats.bloodWars) * 100).toFixed(1) + "%\n");
+            LogResult(stats, "Cautious weather penalty time: " + ((stats.rainy / stats.bloodWars) * 100).toFixed(1) + "%\n");
+        }
+        if (params.tusk) {
+            LogResult(stats, "Tusked weather bonus time: " + ((stats.wet / stats.bloodWars) * 100).toFixed(1) + "%\n");
         }
         LogResult(stats, "Total sim time: " + ((Date.now() - gSim.startTime) / 1000).toFixed(1) + " seconds.  " +
             "Sim ticks per second: " + ((stats.ticks / ((Date.now() - gSim.startTime) / 1000)) / 1000).toFixed(1) + "k" +
@@ -837,6 +840,7 @@ function ConvertSave(save) {
     $('#sniper')[0].value = save.race['sniper'] || 0;
     $('#sticky')[0].value = save.race['sticky'] || 0;
     $('#swift')[0].value = save.race['swift'] || 0;
+    $('#tusk')[0].value = save.race['tusk'] || 0;
     $('#unfathomable')[0].value = save.race['unfathomable'] || 0;
     $('#unfavored')[0].value = save.race['unfavored'] || 0;
 

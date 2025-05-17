@@ -151,7 +151,7 @@ function SimRun(sim, params, stats) {
     
     while (sim.tick < sim.ticks) {
         if (sim.tick % ticks_per_bloodwar == 0) {
-            if (params.cautious) {
+            if (params.cautious || params.tusk) {
                 UpdateWeather(sim, params, stats);
             }
             
@@ -364,8 +364,8 @@ function BloodWar(params, sim, stats) {
     /* Patrols */
     let soldiersKilled = 0;
     let needPity = true;
-    /* Update patrol rating if cautious, for random weather */
-    if (params.cautious) {
+    /* Update patrol rating if cautious/tusked, for random weather */
+    if (params.cautious || params.tusk) {
         sim.patrolRating = ArmyRating(params, sim, params.patrolSize);
         sim.patrolRatingDroids = ArmyRating(params, sim, params.patrolSize + DroidSize(params));
     }
@@ -1195,6 +1195,31 @@ function ArmyRating(params, sim, size, wound) {
         }
         rating *= 1 + boost;
     }
+    if (params.tusk) {
+        let moisture = 0;
+        switch (params.biome) {
+            case 'oceanic':
+            case 'swamp':
+                moisture = 30;
+                break;
+            case 'eden':
+            case 'forest':
+            case 'grassland':
+            case 'savanna':
+                moisture = 20;
+                break;
+            case 'tundra':
+            case 'taiga':
+                moisture = 10;
+                break;
+            default:
+                break;
+        }
+        if (sim.weather == 0 && sim.temp > 0) {
+            moisture += 10;
+        }
+        rating *= 1 + Math.round(moisture * TraitSelect(params.tusk, 0.4, 0.5, 0.75, 1, 1.2, 1.4, 1.6)) / 100 / 2;
+    }
     if (params.grenadier) {
         rating *= TraitSelect(params.grenadier, 2, 2.1, 2.25, 2.5, 2.75, 3, 3.25);
     }
@@ -1514,6 +1539,9 @@ function UpdateWeather(sim, params, stats) {
     
     if (sim.weather == 0) {
         stats.rainy++;
+        if (sim.temp > 0) {
+            stats.wet++;
+        }
     }
 }
 
