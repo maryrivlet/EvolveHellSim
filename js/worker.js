@@ -1301,11 +1301,7 @@ function ArmyRating(params, sim, size, wound) {
 }
 
 function DroidSize(params) {
-    var size = params.enhDroids ? 2 : 1;
-    if (params.highPop) {
-        size *= TraitSelect(params.highPop, 2, 2, 3, 4, 5, 6, 7);
-    }
-    return size;
+    return PopFactor(params) * (params.enhDroids ? 2 : 1);
 }
 
 function FortressRating(params, sim) {
@@ -1359,10 +1355,20 @@ function FortressRating(params, sim) {
 }
 
 function ForgeSoldiers(params) {
-    let soldiers = Math.round(650 / ArmyRating(params, false, 1));
-    let gunValue = params.advGuns ? 2 : 1;
+    let popfactor = PopFactor(params);
+    let rating = Math.max(ArmyRating(params, false, 1), popfactor);
+    let soldiers = Math.ceil(650 / rating);
     
-    soldiers = Math.max(0, soldiers - params.guns * gunValue);
+    let gunSavings = params.guns * popfactor * (params.advGuns ? 2 : 1);
+    soldiers = Math.max(0, soldiers - gunSavings);
+    
+    if (params.hivemind && soldiers > 0) {
+        soldiers = 1;
+        while ((soldiers + gunSavings) * rating < 650) {
+            soldiers++;
+            rating = Math.max(ArmyRating(params, false, soldiers), popfactor) / soldiers;
+        }
+    }
     
     return soldiers;
 }
@@ -1409,6 +1415,14 @@ function Fathom(params, thralls) {
         active -= Math.ceil((active - params.torturers) / 3);
     }
     return (active / 100) * (params.nightmare / 5);
+}
+
+function PopFactor(params) {
+    if (params.highPop) {
+        return TraitSelect(params.highPop, 2, 2, 3, 4, 5, 6, 7);
+    } else {
+        return 1;
+    }
 }
 
 function UpdateWeather(sim, params, stats) {
