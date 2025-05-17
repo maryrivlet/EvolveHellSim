@@ -1218,11 +1218,11 @@ function ArmyRating(params, sim, size, wound) {
         rating *= TraitSelect(params.grenadier, 2, 2.1, 2.25, 2.5, 2.75, 3, 3.25);
     }
     if (params.government == "autocracy") {
-        if (params.governor == "bureaucrat") {
-            rating *= 1.40;
-        } else {
-            rating *= 1.35;
+        let bonus = (params.governor == "bureaucrat") ? 40 : 35;
+        if (params.bureaucratic_efficiency) {
+            bonus += (params.governor == "bureaucrat") ? 10 : 5;
         }
+        rating *= 1 + bonus / 100;
     }
     if (params.universe == "evil") {
         if (params.authority > 100) {
@@ -1265,7 +1265,8 @@ function ArmyRating(params, sim, size, wound) {
         racialModifier *= TraitSelect(params.ooze, 0.75, 0.8, 0.85, 0.88, 0.9, 0.92, 0.94);
     }
     if (params.government == "democracy") {
-        racialModifier *= 0.95;
+        let malus = (params.governor == "bureaucrat") ? 1 : 5;
+        racialModifier *= 1 - malus / 100;
     }
     if (params.universe == "magic") {
         racialModifier *= 0.75;

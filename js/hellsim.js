@@ -796,6 +796,7 @@ function ConvertSave(save) {
     $('#rage')[0].checked = save.city['ptrait'] && save.city.ptrait.includes('rage') ? true : false;
     $('#elliptical')[0].checked = save.city['ptrait'] && save.city.ptrait.includes('elliptical') ? true : false;
     $('#technophobe')[0].checked = save.stats.achieve['technophobe'] && save.stats.achieve.technophobe.l >= 5 ? true : false;
+    $('#bureaucratic_efficiency')[0].checked = save['genes'] && save.genes['governor'] && save.genes.governor >= 3 ? true : false;
     
     $('#aquatic')[0].checked = (save.race.species == "sharkin" || save.race.species == "octigoran");
     $('#apexPredator')[0].value = save.race['apex_predator'] || 0;
