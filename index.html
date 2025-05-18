@@ -33,6 +33,10 @@
     <div id="cGeneral" class="form-group">
       <div class="form-row mb-2">
         <div class="col-auto">
+          <input class="form-check-input ml-3 hell-sim-param" type="checkbox" id="emfield">
+          <label class="form-check-label" for="emfield">EM Field ⭐</label>
+        </div>
+        <div class="col-auto">
           <input class="form-check-input ml-3 hell-sim-param" type="checkbox" id="banana">
           <label class="form-check-label" for="banana">Banana Republic ⭐</label>
         </div>
@@ -47,10 +51,6 @@
         <div class="col-auto">
           <input class="form-check-input ml-3 hell-sim-param" type="checkbox" id="rejuvenated">
           <label class="form-check-label" for="rejuvenated">Rejuvenated</label>
-        </div>
-        <div class="col-auto">
-          <input class="form-check-input ml-3 hell-sim-param" type="checkbox" id="technophobe">
-          <label class="form-check-label" for="technophobe">Technophobe 🏆</label>
         </div>
         <div class="col-auto">
           <input class="form-check-input ml-3 hell-sim-param" type="checkbox" id="bureaucratic_efficiency">
@@ -87,6 +87,29 @@
               <span class="input-group-text">Harmony Crystals</span>
             </div>
             <input class="form-control form-control-sm hell-sim-param" id="harmony" value="0" type="number" step="0.01" style="text-align: right">
+          </div>
+        </div>
+        <div class="form-group col-sm">
+          <div class="input-group input-group-sm">
+            <div class="input-group-prepend">
+              <span class="input-group-text">Technophobe 🏆</span>
+            </div>
+            <select class="form-control form-control-sm hell-sim-param" id="technophobe">
+              <option value=0 selected>Unachieved</option>
+              <option value=1>No Star</option>
+              <option value=2>Plain Star</option>
+              <option value=3>Bronze Star</option>
+              <option value=4>Silver Star</option>
+              <option value=5>Gold Star</option>
+              <option value=6>Gold Star +1 Universe</option>
+              <option value=7>Gold Star +2 Universes</option>
+              <option value=8>Gold Star +3 Universes</option>
+              <option value=9>Gold Star +4 Universes</option>
+              <option value=10>Gold Star +5 Universes</option>
+              <option value=102>Plain Star + Micro Gold Star</option>
+              <option value=103>Bronze Star + Micro Gold Star</option>
+              <option value=104>Silver Star + Micro Gold Star</option>
+            </select>
           </div>
         </div>
         <div class="form-group col-sm">
@@ -1183,6 +1206,7 @@
               <option value=8>Disruptor Rifles</option>
               <option value=9>Gauss Rifles</option>
               <option value=10>Cyborg Soldiers</option>
+              <option value=11>Ethereal Weapons</option>
             </select>
           </div>
         </div>
@@ -1554,6 +1578,90 @@
         <div class="form-group col-sm">
         </div>
         <div class="form-group col-sm">
+        </div>
+      </div>
+    </div>
+
+    <h5><span id="hEden" class="collapser" data-target="#cEden">Eden Setup <span id="hOptionsStatus" class="collapser-icon">-</span></span></h5>
+    <div id="cEden" class="form-group">
+      <div class="form-row mb-2">
+        <div class="col-auto">
+          <input class="form-check-input ml-3 hell-sim-param" type="checkbox" id="soul_bait">
+          <label class="form-check-label" for="soul_bait">Soul Bait</label>
+        </div>
+        <div class="col-auto">
+          <input class="form-check-input ml-3 hell-sim-param" type="checkbox" id="asphodel_hostility">
+          <label class="form-check-label" for="asphodel_hostility">Soul Power</label>
+        </div>
+        <div class="col-auto">
+          <input class="form-check-input ml-3 hell-sim-param" type="checkbox" id="asphodel_mech_security">
+          <label class="form-check-label" for="asphodel_mech_security">Asphodel Mech Security</label>
+        </div>
+        <div class="col-auto">
+          <input class="form-check-input ml-3 hell-sim-param" type="checkbox" id="dimensional_tap">
+          <label class="form-check-label" for="dimensional_tap">Dimensional Tap</label>
+        </div>
+        <div class="col-auto">
+          <input class="form-check-input ml-3 hell-sim-param" type="checkbox" id="spectral_training">
+          <label class="form-check-label" for="spectral_training">Spectral Training Ground</label>
+        </div>
+        <div class="col-auto">
+          <input class="form-check-input ml-3 hell-sim-param" type="checkbox" id="soul_compactor">
+          <label class="form-check-label" for="soul_compactor">Soul Compactor</label>
+        </div>
+        <div class="col-auto">
+          <input class="form-check-input ml-3 hell-sim-param" type="checkbox" id="suction_force">
+          <label class="form-check-label" for="suction_force">Suction Force</label>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group col-sm">
+          <div class="input-group input-group-sm">
+            <div class="input-group-prepend">
+              <span class="input-group-text">Ghost Trappers</span>
+            </div>
+            <input class="form-control form-control-sm hell-sim-param" id="ghost_trappers" value="0" type="number" style="text-align: right">
+          </div>
+        </div>
+        <div class="form-group col-sm">
+          <div class="input-group input-group-sm">
+            <div class="input-group-prepend">
+              <span class="input-group-text">Mech Response Effect %</span>
+            </div>
+            <input class="form-control form-control-sm hell-sim-param" id="mech_station_effect" value="0" type="number" min="0" style="text-align: right">
+          </div>
+        </div>
+        <div class="form-group col-sm">
+          <div class="input-group input-group-sm">
+            <div class="input-group-prepend">
+              <span class="input-group-text">Thermal Collectors</span>
+            </div>
+            <input class="form-control form-control-sm hell-sim-param" id="thermal_collectors" value="0" type="number" style="text-align: right">
+          </div>
+        </div>
+        <div class="form-group col-sm">
+          <div class="input-group input-group-sm">
+            <div class="input-group-prepend">
+              <span class="input-group-text">Bunkers</span>
+            </div>
+            <input class="form-control form-control-sm hell-sim-param" id="bunkers" value="0" type="number" style="text-align: right">
+          </div>
+        </div>
+        <div class="form-group col-sm">
+          <div class="input-group input-group-sm">
+            <div class="input-group-prepend">
+              <span class="input-group-text">Spirit Vacuums</span>
+            </div>
+            <input class="form-control form-control-sm hell-sim-param" id="vacuums" value="0" type="number" style="text-align: right">
+          </div>
+        </div>
+        <div class="form-group col-sm">
+          <div class="input-group input-group-sm">
+            <div class="input-group-prepend">
+              <span class="input-group-text">Spirit Batteries</span>
+            </div>
+            <input class="form-control form-control-sm hell-sim-param" id="batteries" value="0" type="number" style="text-align: right">
+          </div>
         </div>
       </div>
     </div>

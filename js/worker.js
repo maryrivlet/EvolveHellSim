@@ -79,6 +79,7 @@ function SimStart(id, simId, params, stats) {
         pity: 0,
         eventOdds: 999,
         forgeSouls: 0,
+        compactor_energy: 0,
         money: params.moneyCap,
         mercCounter: 0,
         clickerCounter: 0,
@@ -220,6 +221,9 @@ function SimRun(sim, params, stats) {
             }
         }
         
+        /* Spirit Vacuum */
+        Vacuum(params, sim, stats);
+        
         sim.tick++;
         stats.ticks++;
         
@@ -348,7 +352,7 @@ function BloodWar(params, sim, stats) {
     }
     
     /* Gem Chance */
-    let gemOdds = params.technophobe ? 9000 : 10000;
+    let gemOdds = params.technophobe >= 5 ? 9000 : 10000;
     gemOdds -= sim.pity;
     gemOdds = Math.round(gemOdds * (0.948 ** params.beacons));
     if (params.ghostly) {
@@ -639,13 +643,40 @@ function BloodWar(params, sim, stats) {
     }
 
     /* Soul Attractors */
-    if (forgeOperating) {
-        forgeSouls += params.soulAttractors * ((params.soulTrap * 5) + Rand(40, 120));
+    if (forgeOperating && params.soulAttractors) {
+        let bonus = params.soulTrap * 5;
+        if (params.soul_bait) {
+            bonus *= 2;
+        }
+        forgeSouls += params.soulAttractors * (bonus + Rand(40, 120));
+    }
+
+    /* Ghost Trappers */
+    if (forgeOperating && params.ghost_trappers) {
+        let souls = params.ghost_trappers * (params.soulTrap * 5 + Rand(150, 250));
+        if (params.dimensional_tap) {
+            let heatsink = 100;
+            if (params.technophobe >= 2) {
+                heatsink += params.technophobe >= 4 ? 25 : 10;
+                heatsink += 5 * params.additional_technophobe_universes;
+            }
+            heatsink = Math.max(0, heatsink * params.thermal_collectors - (params.emfield ? 15000 : 10000));
+            souls *= 1 + heatsink / 12500;
+        }
+        let resist = 1;
+        if (params.asphodel_hostility) {
+            if (params.asphodel_mech_security) {
+                resist = 0.34 + params.mech_station_effect * 0.0066;
+            } else {
+                resist = 0.67;
+            }
+        }
+        forgeSouls += Math.floor(souls * resist);
     }
 
     /* Gun Emplacements */
-    if (forgeOperating) {
-        let gemOdds = params.technophobe ? 6750 : 7500;
+    if (forgeOperating && params.guns) {
+        let gemOdds = params.technophobe >= 5 ? 6750 : 7500;
         if (params.soulLink) {
             gemOdds = Math.round(gemOdds * 0.94 ** params.soulAttractors);
         }
@@ -665,8 +696,8 @@ function BloodWar(params, sim, stats) {
     }
 
     /* Gate Turrets */
-    if (forgeOperating) {
-        let gemOdds = params.technophobe ? 2700 : 3000;
+    if (forgeOperating && params.gateTurrets) {
+        let gemOdds = params.technophobe >= 5 ? 2700 : 3000;
         let gateKills = 0;
         if (params.advGuns) {
             gateKills = params.gateTurrets * Rand(65, 100);
@@ -684,7 +715,7 @@ function BloodWar(params, sim, stats) {
     
     /* Soul Forge */
     if (forgeOperating) {
-        let gemOdds = params.technophobe ? 4500 : 5000;
+        let gemOdds = params.technophobe >= 5 ? 4500 : 5000;
         let forgeKills = Rand(25, 150);
         forgeSouls += forgeKills;
         stats.kills += forgeKills;
@@ -984,6 +1015,20 @@ function RepairSurveyors(params, sim, stats) {
     }
 }
 
+function Vacuum(params, sim, stats) {
+    if (params.soul_compactor && params.vacuums > 0) {
+        let drain = 1653439 * params.vacuums;
+        if (params.suction_force && params.batteries > 0) {
+            drain *= 1 + params.batteries * 0.08;
+        }
+        sim.compactor_energy += Math.round(drain / 2);
+        if (sim.compactor_energy >= 1000000000) {
+            sim.compactor_energy -= 1000000000;
+            stats.compactorGems++;
+        }
+    }
+}
+
 function PatrolCasualties(params, sim, stats, demons, ambush) {
     var armor;
     if (ambush) {
@@ -1035,7 +1080,6 @@ function PatrolCasualties(params, sim, stats, demons, ambush) {
 
 /* Returns soldier training time in ticks, not rounded */
 function TrainingTime(params) {
-    var rate;
     var bootCampBonus;
 
     bootCampBonus = params.vrTraining == true ? 0.08 : 0.05;
@@ -1044,15 +1088,20 @@ function TrainingTime(params) {
         bootCampBonus *= params.bureaucratic_efficiency ? 1.3 : 1.25;
     }
     
-    /* rate is percentage points per tick */
-    rate = 2.5;
+    /* Rate is calculated in percentage points per second */
+    let rate = 2.5;
     if (params.highPop) {
         rate *= TraitSelect(params.highPop, 1.2, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5);
     }
     if (params.diverse) {
         rate /= TraitSelect(params.diverse, 1.4, 1.35, 1.3, 1.25, 1.2, 1.15, 1.12);
     }
-    rate *= 1 + params.bootCamps * bootCampBonus;
+    if (params.bootCamps) {
+        rate *= 1 + params.bootCamps * TrainingBonus(params.vrTraining ? 0.08 : 0.05, params);
+    }
+    if (params.bunkers && params.spectral_training) {
+        rate *= 1 + params.bunkers * TrainingBonus(0.1, params);
+    }
     if (params.beast) {
         rate *= TraitSelect(params.beast, 1.03, 1.04, 1.05, 1.1, 1.15, 1.2, 1.25);
     }
@@ -1062,11 +1111,20 @@ function TrainingTime(params) {
     if (params.orc_thralls) {
         rate += 2.5 * Fathom(params, params.orc_thralls);
     }
+    /* Convert to progress per tick (as does the game) */
     rate *= 0.25;
     
     /* Convert to ticks per soldier */
     rate /= 100.0;
     return 1.0/rate;
+}
+
+function TrainingBonus(value, params) {
+    value += params.bloodLust * 0.002;
+    if (params.governor == "soldier") {
+        value *= params.bureaucratic_efficiency ? 1.3 : 1.25;
+    }
+    return value;
 }
 
 function ArmyRating(params, sim, size, wound) {

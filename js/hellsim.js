@@ -41,6 +41,16 @@ function Simulate() {
         gSim.params.astrology = GetStarSign();
     }
     
+    /* Parse technophobe info */
+    let technophobe_input = gSim.params.technophobe;
+    if (technophobe_input >= 100) {
+        gSim.params.technophobe = technophobe_input % 100;
+        gSim.params.additional_technophobe_universes = Math.floor(technophobe_input / 100);
+    } else {
+        gSim.params.technophobe = Math.min(technophobe_input, 5);
+        gSim.params.additional_technophobe_universes = Math.max(technophobe_input - 5, 0);
+    }
+    
     gSim.stats = InitStats(gSim.params);
     gSim.startTime = Date.now();
     gSim.progress = 0;
@@ -74,6 +84,7 @@ function InitStats(params) {
         forgeGems: 0,
         gunGems: 0,
         gateGems: 0,
+        compactorGems: 0,
         patrolKills: 0,
         droneKills: 0,
         totalPreFightThreat: 0,
@@ -182,7 +193,8 @@ function SimResults() {
             ",  Guns: " + (stats.gunGems / hours).toFixed(2) +
             ",  Forge: " + (stats.forgeGems / hours).toFixed(2) +
             ",  Gate Turrets: " + (stats.gateGems / hours).toFixed(2) +
-            ",  Total: " + ((stats.patrolGems + stats.surveyorGems + stats.gunGems + stats.forgeGems + stats.gateGems) / hours).toFixed(2) +
+            (params.soul_compactor ? ",  Compactor: " + (stats.compactorGems / hours).toFixed(2) : "") +
+            ",  Total: " + ((stats.patrolGems + stats.surveyorGems + stats.gunGems + stats.forgeGems + stats.gateGems + stats.compactorGems) / hours).toFixed(2) +
             "\n");
     LogResult(stats, "Encounters:  " + stats.patrolEncounters +
             ",  per hour: " + (stats.patrolEncounters / hours).toFixed(1) +
@@ -734,6 +746,13 @@ function GetParams() {
     
 }
 
+/* Old saved params may not match current format */
+function UpdateParams() {
+    if (gParams['technophobe'] && "boolean" == typeof gParams.technophobe) {
+        gParams.technophobe = gParams.technophobe ? 5 : 0;
+    }
+}
+
 /* Fill parameter values back to the form */
 function SetParams() {
     console.log(gParams);
@@ -793,11 +812,20 @@ function ConvertSave(save) {
     $('#biome')[0].value = save.city.biome;
     $('#orbit')[0].value = save.city.calendar.orbit;
     
+    $('#emfield')[0].checked = save.race['emfield'] ? true : false;
     $('#banana')[0].checked = save.race['banana'] ? true : false;
     $('#rage')[0].checked = save.city['ptrait'] && save.city.ptrait.includes('rage') ? true : false;
     $('#elliptical')[0].checked = save.city['ptrait'] && save.city.ptrait.includes('elliptical') ? true : false;
     $('#rejuvenated')[0].checked = save.race['rejuvenated'] ? true : false;
-    $('#technophobe')[0].checked = save.stats.achieve['technophobe'] && save.stats.achieve.technophobe.l >= 5 ? true : false;
+    let technophobe_l = save.stats.achieve['technophobe'] && save.stats.achieve.technophobe.l;
+    let technophobe_additional = 0;
+    let universes = ['e', 'a', 'h', 'm', 'mg'];
+    for (let idx in universes) {
+        if (save.stats.achieve['technophobe'] && save.stats.achieve.technophobe[universes[idx]] >= 5) {
+            technophobe_additional++;
+        }
+    }
+    $('#technophobe')[0].value = technophobe_l >= 5 ? 5 + technophobe_additional : technophobe_l + 100 * technophobe_additional;
     $('#bureaucratic_efficiency')[0].checked = save['genes'] && save.genes['governor'] && save.genes.governor >= 3 ? true : false;
     
     $('#aquatic')[0].checked = (save.race.species == "sharkin" || save.race.species == "octigoran");
@@ -962,6 +990,24 @@ function ConvertSave(save) {
         $('#soulForge')[0].value = 0;
     }
 
+    $('#soul_bait')[0].checked = save.tech['hell_pit'] && save.tech.hell_pit >= 6 ? true : false;
+    /* "Soul Power" enables the tech 5 event which is random, just assume it will happen */
+    $('#asphodel_hostility')[0].checked = save.tech['asphodel'] && save.tech.asphodel >= 4 ? true : false;
+    $('#asphodel_mech_security')[0].checked = save.tech['asphodel'] && save.tech.asphodel >= 6 ? true : false;
+    $('#dimensional_tap')[0].checked = save.tech['science'] && save.tech.science >= 24 &&
+        save['interstellar'] && save.interstellar['ascension_trigger'] && save.interstellar.ascension_trigger.on >= 1 ?
+        true : false;
+    $('#spectral_training')[0].checked = save.tech['celestial_warfare'] && save.tech.celestial_warfare >= 5 ? true : false;
+    $('#soul_compactor')[0].checked = save['eden'] && save.eden['soul_compactor'] && save.eden.soul_compactor.count >= 1 ? true : false;
+    $('#suction_force')[0].checked = save.tech['isle'] && save.tech.isle >= 6 ? true : false;
+    
+    $('#ghost_trappers')[0].value = save.civic['ghost_trapper'] && save.civic['ghost_trapper'].assigned || 0;
+    $('#mech_station_effect')[0].value = save['eden'] && save.eden['mech_station'] && save.eden.mech_station.count >= 10 && save.eden.mech_station.effect || 0;
+    $('#thermal_collectors')[0].value = save['interstellar'] && save.interstellar['thermal_collector'] && save.interstellar.thermal_collector.count || 0;
+    $('#bunkers')[0].value = save['eden'] && save.eden['bunker'] && save.eden.bunker.on || 0;
+    $('#vacuums')[0].value = save['eden'] && save.eden['spirit_vacuum'] && save.eden.spirit_vacuum.on || 0;
+    $('#batteries')[0].value = save['eden'] && save.eden['spirit_battery'] && save.eden.spirit_battery.on || 0;
+
     OnChange();
     
 }
@@ -1034,6 +1080,7 @@ $(document).ready( function() {
     paramStr = window.localStorage.getItem('hellSimParams') || false;
     if (paramStr) {
         gParams = JSON.parse(paramStr);
+        UpdateParams();
         SetParams();
     }
 
