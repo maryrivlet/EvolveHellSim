@@ -85,6 +85,7 @@ function InitStats(params) {
         gunGems: 0,
         gateGems: 0,
         compactorGems: 0,
+        curiousGems: 0,
         patrolKills: 0,
         droneKills: 0,
         totalPreFightThreat: 0,
@@ -194,7 +195,8 @@ function SimResults() {
             ",  Forge: " + (stats.forgeGems / hours).toFixed(2) +
             ",  Gate Turrets: " + (stats.gateGems / hours).toFixed(2) +
             (params.soul_compactor ? ",  Compactor: " + (stats.compactorGems / hours).toFixed(2) : "") +
-            ",  Total: " + ((stats.patrolGems + stats.surveyorGems + stats.gunGems + stats.forgeGems + stats.gateGems + stats.compactorGems) / hours).toFixed(2) +
+            (params.curious ? ",  Curious: " + (stats.curiousGems / hours).toFixed(2) : "") +
+            ",  Total: " + ((stats.patrolGems + stats.surveyorGems + stats.gunGems + stats.forgeGems + stats.gateGems + stats.compactorGems + stats.curiousGems) / hours).toFixed(2) +
             "\n");
     LogResult(stats, "Encounters:  " + stats.patrolEncounters +
             ",  per hour: " + (stats.patrolEncounters / hours).toFixed(1) +
@@ -817,6 +819,8 @@ function ConvertSave(save) {
     $('#banana')[0].checked = save.race['banana'] ? true : false;
     $('#rage')[0].checked = save.city['ptrait'] && save.city.ptrait.includes('rage') ? true : false;
     $('#elliptical')[0].checked = save.city['ptrait'] && save.city.ptrait.includes('elliptical') ? true : false;
+    $('#flare')[0].checked = save.city['ptrait'] && save.city.ptrait.includes('flare') ? true : false;
+    $('#ancient_ruins')[0].checked = save.race['ancient_ruins'] ? true : false;
     $('#rejuvenated')[0].checked = save.race['rejuvenated'] ? true : false;
     let technophobe_l = save.stats.achieve['technophobe'] && save.stats.achieve.technophobe.l;
     let technophobe_additional = 0;
@@ -830,6 +834,7 @@ function ConvertSave(save) {
     $('#bureaucratic_efficiency')[0].checked = save['genes'] && save.genes['governor'] && save.genes.governor >= 3 ? true : false;
     
     $('#aquatic')[0].checked = (save.race.species == "sharkin" || save.race.species == "octigoran");
+    $('#aggressive')[0].value = save.race['aggressive'] || 0;
     $('#apexPredator')[0].value = save.race['apex_predator'] || 0;
     $('#astrologer')[0].value = save.race['astrologer'] || 0;
     $('#armored')[0].value = save.race['armored'] || 0;
@@ -842,6 +847,7 @@ function ConvertSave(save) {
     $('#chameleon')[0].value = save.race['chameleon'] || 0;
     $('#chicken')[0].value = save.race['chicken'] || 0;
     $('#claws')[0].value = save.race['claws'] || 0;
+    $('#curious')[0].value = save.race['curious'] || 0;
     $('#diverse')[0].value = save.race['diverse'] || 0;
     $('#elemental')[0].value = save.race['elemental'] || 0;
     $('#elusive')[0].value = save.race['elusive'] || 0;
@@ -864,6 +870,7 @@ function ConvertSave(save) {
     $('#rhinoRage')[0].value = save.race['rage'] || 0;
     $('#regenerative')[0].value = save.race['regenerative'] || 0;
     $('#revive')[0].value = save.race['revive'] || 0;
+    $('#rogue')[0].value = save.race['rogue'] || 0;
     $('#scales')[0].value = save.race['scales'] || 0;
     $('#slaver')[0].value = save.race['slaver'] || 0;
     $('#slow')[0].value = save.race['slow'] || 0;

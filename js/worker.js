@@ -748,15 +748,44 @@ function Events(params, sim, stats) {
             "inspiration",
             "motivation",
             "surge",
-            "terrorist",
-            "ruins"
+            "terrorist"
         ];
         
         if (!(params.kindling || params.smoldering || params.evil || params.aquatic)) {
             events.push("fire");
         }
+        if (params.flare) {
+            events.push("flare");
+        }
+        /* TODO: Witch crusade? */
+        if (params.ancient_ruins) {
+            events.push("ruins");
+        }
         if (params.slaver) {
             events.push("slave1", "slave2", "slave3");
+        }
+        if (params.government == "republic") {
+            events.push("protest");
+        }
+        if (params.governor == "media") {
+            events.push("scandal");
+        }
+        /* TODO: maybe?
+        if (params.miners) {
+            events.push("mine_collapse");
+        }
+        */
+        if (params.rogue) {
+            events.push("klepto");
+        }
+        if (params.chicken) {
+            events.push("chicken_feast");
+        }
+        if (params.aggressive) {
+            events.push("brawl");
+        }
+        if (params.curious) {
+            events.push("m_curious");
         }
         
         /* Remove the last event that occurred from the list so that the same event can't happen twice in a row */
@@ -793,6 +822,10 @@ function Events(params, sim, stats) {
                 if (params.printTerrorists) {
                     LogResult(stats, TimeStr(sim) + " - Terrorist attack: " + wounded + " wounded, " + killed + " killed.\n");
                 }
+            }
+        } else if (event == "m_curious") {
+            if (Rand(0, 25) == 0) {
+                stats.curiousGems++;
             }
         } /* else, irrelevant event */
         
