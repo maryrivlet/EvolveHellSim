@@ -1334,8 +1334,15 @@ function ArmyRating(params, sim, size, wound) {
     }
     if (params.universe == "magic") {
         racialModifier *= 0.75;
+        if (params.witch_hunter) {
+            racialModifier *= 0.75;
+        }
         if (params.warRitual) {
-            racialModifier *= 1 + (params.warRitual / (params.warRitual + 75));
+            let boost = params.warRitual / (params.warRitual + 75);
+            if (params.witch_hunter) {
+                boost *= 2.5;
+            }
+            racialModifier *= 1 + boost;
         }
     }
     if (params.highPop) {

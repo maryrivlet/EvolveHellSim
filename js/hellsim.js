@@ -813,6 +813,7 @@ function ConvertSave(save) {
     $('#orbit')[0].value = save.city.calendar.orbit;
     
     $('#emfield')[0].checked = save.race['emfield'] ? true : false;
+    $('#witch_hunter')[0].checked = save.race['witch_hunter'] ? true : false;
     $('#banana')[0].checked = save.race['banana'] ? true : false;
     $('#rage')[0].checked = save.city['ptrait'] && save.city.ptrait.includes('rage') ? true : false;
     $('#elliptical')[0].checked = save.city['ptrait'] && save.city.ptrait.includes('elliptical') ? true : false;
