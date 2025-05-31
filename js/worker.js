@@ -815,6 +815,11 @@ function Events(params, sim, stats) {
                 let killed = Rand(0, sim.wounded);
                 let wounded = Rand(0, sim.soldiers - sim.wounded);
                 
+                if (params.instincts) {
+                    killed = Math.round(killed / 2);
+                    wounded = Math.round(wounded / 2);
+                }
+                
                 sim.soldiers -= killed;
                 stats.soldiersKilled += killed;
                 sim.wounded += wounded;
