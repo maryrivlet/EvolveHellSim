@@ -18,7 +18,8 @@ var gStop = false;
             fortressRating          - Fortress combat rating
             patrolRating            - Normal patrol combat rating
             patrolRatingDroids      - Droid-augmented patrol combat rating
-            trainingTime            - Soldier training time in ticks per soldier
+            tickLength              - Length of a tick in milliseconds
+            trainingRate            - Training progress (%) per tick
             forgeSoldiers           - Number of soldiers required to run the Soul Forge
         'progress'              - Update for progress bar
             increment               - Progress increment as a percentage of the sim
@@ -47,13 +48,7 @@ onmessage = function(e) {
 }
 
 function SimStart(id, simId, params, stats) {
-    var tickLength = 250;
-    if (params.hyper) {
-        tickLength *= TraitSelect(params.hyper, 0.99, 0.98, 0.97, 0.95, 0.94, 0.93, 0.92);
-    }
-    if (params.slow) {
-        tickLength *= TraitSelect(params.slow, 1.14, 1.13, 1.12, 1.1, 1.08, 1.06, 1.05);
-    }
+    let tickLength = TickLength(params);
     var sim = {
         id: id,
         simId: simId,
@@ -70,7 +65,7 @@ function SimStart(id, simId, params, stats) {
         patrolRatingDroids: 0,
         wounded: 0,
         trainingProgress: 0,
-        trainingTime: 0,
+        trainingRate: 0,
         surveyors: params.surveyors,
         carRepair: 0,
         siegeOdds: 999,
@@ -100,7 +95,7 @@ function SimStart(id, simId, params, stats) {
     /* Calculate patrol rating and training rate ahead of time for efficiency */
     sim.patrolRating = ArmyRating(params, false, params.patrolSize);
     sim.patrolRatingDroids = ArmyRating(params, false, params.patrolSize + DroidSize(params));
-    sim.trainingTime = TrainingTime(params);
+    sim.trainingRate = TrainingRate(params);
 
     LogResult(stats, " -- Sim " + sim.simId.toString().padStart(Math.floor(Math.log10(params.sims)) + 1, 0) + " --\n");
 
@@ -123,13 +118,15 @@ function ProvideInfo (params) {
     var fortressRating;
     var patrolRating;
     var patrolRatingDroids;
-    var trainingTime;
+    var tickLength;
+    var trainingRate;
     var forgeSoldiers;
     
     fortressRating = FortressRating(params, false);
     patrolRating = ArmyRating(params, false, params.patrolSize);
     patrolRatingDroids = ArmyRating(params, false, params.patrolSize + DroidSize(params));
-    trainingTime = TrainingTime(params);
+    tickLength = TickLength(params);
+    trainingRate = TrainingRate(params);
     forgeSoldiers = ForgeSoldiers(params);
 
     self.postMessage({
@@ -137,7 +134,8 @@ function ProvideInfo (params) {
         fortressRating: fortressRating,
         patrolRating: patrolRating,
         patrolRatingDroids: patrolRatingDroids,
-        trainingTime: trainingTime,
+        tickLength: tickLength,
+        trainingRate: trainingRate,
         forgeSoldiers: forgeSoldiers
     });
 }
@@ -855,15 +853,14 @@ function TrainSoldiers(params, sim, stats) {
         return;
     }
     
-    sim.trainingProgress += 100 / sim.trainingTime;
+    sim.trainingProgress += sim.trainingRate;
     
     if (sim.trainingProgress >= 100) {
-        sim.soldiers++;
-        stats.soldiersTrained++;
-        sim.trainingProgress = 0;
-        if (sim.hellSoldiers < sim.maxHellSoldiers) {
-            sim.hellSoldiers++;
-        }
+        let trained = Math.floor(sim.trainingProgress / 100);
+        sim.soldiers += trained;
+        stats.soldiersTrained += trained;
+        sim.trainingProgress -= trained * 100;
+        sim.hellSoldiers = Math.min(sim.hellSoldiers + trained, sim.maxHellSoldiers);
     }
 }
 
@@ -1119,8 +1116,19 @@ function PatrolCasualties(params, sim, stats, demons, ambush) {
     return dead;
 }
 
-/* Returns soldier training time in ticks, not rounded */
-function TrainingTime(params) {
+function TickLength(params) {
+    let tickLength = 250;
+    if (params.hyper) {
+        tickLength *= TraitSelect(params.hyper, 0.99, 0.98, 0.97, 0.95, 0.94, 0.93, 0.92);
+    }
+    if (params.slow) {
+        tickLength *= TraitSelect(params.slow, 1.14, 1.13, 1.12, 1.1, 1.08, 1.06, 1.05);
+    }
+    return tickLength;
+}
+
+/* Returns soldier training rate in progress points (%) per tick */
+function TrainingRate(params) {
     var bootCampBonus;
 
     bootCampBonus = params.vrTraining == true ? 0.08 : 0.05;
@@ -1155,9 +1163,7 @@ function TrainingTime(params) {
     /* Convert to progress per tick (as does the game) */
     rate *= 0.25;
     
-    /* Convert to ticks per soldier */
-    rate /= 100.0;
-    return 1.0/rate;
+    return rate;
 }
 
 function TrainingBonus(value, params) {

@@ -486,7 +486,7 @@ function HandleSimStopped(stats) {
     }
 */
 function UpdateUIStrings(e) {
-    ratingStr = "";
+    let ratingStr = "";
     if (gParams.cautious) {
         ratingStr += "~ ";
     }    
@@ -509,17 +509,13 @@ function UpdateUIStrings(e) {
     }
     $('#fortressRating').html(ratingStr);
     
-    /* Get the training time, then round up to next tick and convert to seconds */
-    trainingTime = e.data.trainingTime;
-    trainingTime = Math.ceil(trainingTime) / 4;
-    if (gParams.hyper) {
-        trainingTime *= 0.95;
-    }
-    if (gParams.slow) {
-        trainingTime *= 1.1;
-    }
-    let trainingRate = 3600 / trainingTime;
-    let trainingStr = trainingTime.toFixed(2) + "sec&nbsp;&nbsp;&nbsp;" + trainingRate.toFixed(1);
+    /* Get the training rate in progress (%) per tick, convert to soldiers per hour */
+    let trainingRate = e.data.trainingRate;
+    let tickLength = e.data.tickLength; /* milliseconds */
+    
+    let soldierPerHour = (trainingRate / 100) * (1000 / tickLength) * 3600;
+    let trainingTime = (tickLength / 1000) * (100 / trainingRate);
+    let trainingStr = trainingTime.toFixed(2) + "sec&nbsp;&nbsp;&nbsp;" + soldierPerHour.toFixed(1);
     var mercRate;
     switch (gParams.hireMercs) {
         case 'script':
@@ -576,11 +572,7 @@ function UpdateUIStrings(e) {
 }
 
 function OnChange() {
-    var patrolRating;
-    var patrolRatingDroids;
-    var fortressRating;
-    var trainingTime;
-    
+
     GetParams();
 
     /* If cpuThreads is invalid, set it to default based on user hardware.
