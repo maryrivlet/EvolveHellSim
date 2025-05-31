@@ -487,7 +487,10 @@ function BloodWar(params, sim, stats) {
     if (params.revive) {
         let reviveDivisor = TraitSelect(params.revive, 4, 4, 4, 3, 2, 2, 2);
         let reviveMax = soldiersKilled / reviveDivisor + 0.25;
-        let revived = Math.round(Math.random() * reviveMax);
+        /* Yes, the argument is not an integer. This is wacky in-game due to refactoring.
+        It's a pretty devastating nerf in practice. See:
+        https://github.com/pmotschmann/Evolve/issues/1479 */
+        let revived = Rand(0, reviveMax);
         sim.soldiers += revived;
         stats.soldiersRevived += revived;
     }
