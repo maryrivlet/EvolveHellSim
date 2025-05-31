@@ -813,7 +813,7 @@ function Events(params, sim, stats) {
             /* Terrorist attack or enemy raid.  Equivalent for our purposes here */
             if (params.terrorists) {
                 let killed = Rand(0, sim.wounded);
-                let wounded = Rand(sim.wounded, sim.soldiers);
+                let wounded = Rand(0, sim.soldiers - sim.wounded);
                 
                 sim.soldiers -= killed;
                 stats.soldiersKilled += killed;
