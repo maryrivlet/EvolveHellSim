@@ -97,6 +97,7 @@ function InitStats(params) {
         bloodWars: 0,
         patrolEncounters: 0,
         skippedEncounters: 0,
+        marginalEncounters: 0,
         ambushes: 0,
         soldiersTrained: 0,
         soldiersKilled: 0,
@@ -203,6 +204,7 @@ function SimResults() {
     LogResult(stats, "Encounters:  " + stats.patrolEncounters +
             ",  per hour: " + (stats.patrolEncounters / hours).toFixed(1) +
             ",  per bloodwar: " + (stats.patrolEncounters / stats.bloodWars).toFixed(3) +
+            ",  marginal: " + (stats.marginalEncounters / stats.bloodWars * 100).toFixed(2) + "%" + 
             ",  skipped: " + (stats.skippedEncounters / (stats.skippedEncounters + stats.patrolEncounters) * 100).toFixed(2) + "%" +
             "\n");
     LogResult(stats, "Patrol kills per gem: " + (stats.patrolKills / stats.patrolGems).toFixed(2) +

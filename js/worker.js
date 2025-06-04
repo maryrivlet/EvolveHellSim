@@ -398,6 +398,9 @@ function BloodWar(params, sim, stats) {
         if (Rand(0, sim.threat) >= Rand(0, 999)) {
             /* Encounter */
             stats.patrolEncounters++;
+            if (i + 1 == sim.patrols) {
+                stats.marginalEncounters++;
+            }
             
             let droid = false;
             if (droids > 0) {
