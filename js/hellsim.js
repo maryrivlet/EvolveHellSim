@@ -104,6 +104,8 @@ function InitStats(params) {
         totalWounded: 0,
         maxWounded: 0,
         ambushDeaths: 0,
+        woundedDeaths: 0,
+        noDroidDeaths: 0,
         minReserves: params.garrison + params.defenders,
         surges: 0,
         sieges: 0,
@@ -221,6 +223,8 @@ function SimResults() {
     LogResult(stats,
             ",  per bloodwar: " + (stats.soldiersKilled / stats.bloodWars).toFixed(3) +
             ",  in ambushes: " + (stats.ambushDeaths / stats.soldiersKilled * 100).toFixed(1) + "%" +
+            ",  in wounded patrols: " + (stats.woundedDeaths / stats.soldiersKilled * 100).toFixed(1) + "%" +
+            ",  with no droid: " + (stats.noDroidDeaths / stats.soldiersKilled * 100).toFixed(1) + "%" +
             "\n");
     if (params.hireMercs != "off") {
         LogResult(stats,

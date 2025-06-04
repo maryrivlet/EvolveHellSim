@@ -399,20 +399,24 @@ function BloodWar(params, sim, stats) {
             /* Encounter */
             stats.patrolEncounters++;
             
+            let droid = false;
+            if (droids > 0) {
+                droid = true;
+                droids--;
+            }
+            
             var patrolRating;
             /* If no wounded, use alread-calculated patrol rating to save time */
             if (wounded == 0) {
-                if (droids > 0) {
+                if (droid) {
                     patrolRating = sim.patrolRatingDroids;
-                    droids--;
                 } else {
                     patrolRating = sim.patrolRating;
                 }
             } else {
                 let patrolSize = params.patrolSize;
-                if (droids > 0) {
+                if (droid) {
                     patrolSize += DroidSize(params);
-                    droids--;
                 }
                 patrolRating = ArmyRating(params, sim, patrolSize, wounded);
             }
@@ -455,7 +459,13 @@ function BloodWar(params, sim, stats) {
                 let kills = patrolRating;
                 if (kills < demons) {
                     /* Suffer casualties if the patrol didn't kill all of the demons */
-                    soldiersKilled += PatrolCasualties(params, sim, stats, (demons - kills), false);
+                    let dead = PatrolCasualties(params, sim, stats, (demons - kills), false);
+                    soldiersKilled += dead;
+                    if (wounded > 0) {
+                        stats.woundedDeaths += dead;
+                    } else if (!droid) {
+                        stats.noDroidDeaths += dead;
+                    }
                 } else {
                     kills = demons;
                 }
