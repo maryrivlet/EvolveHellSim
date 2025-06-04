@@ -993,7 +993,7 @@ function HealSoldiers(params, sim, stats) {
         healCredits = params.bootCamps;
     }
     if (params.rejuvenated && params.lamentis) {
-        hc += params.lamentis;
+        healCredits += params.lamentis;
     }
     if (params.astrology == "cancer") {
         healCredits = Math.max(0, healCredits + Math.round((params.astroWish ? 8 : 5) * AstroMod(params)));
