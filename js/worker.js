@@ -1050,7 +1050,7 @@ function RepairSurveyors(params, sim, stats) {
     }
     let repair = 180;
     if (params.repairDroids > 0) {
-        repair *= 0.95 ** params.repairDroids;
+        repair *= 0.92 ** params.repairDroids;
     }
     if (params.highPop) {
         repair /= TraitSelect(params.HighPop, 1.2, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5);
