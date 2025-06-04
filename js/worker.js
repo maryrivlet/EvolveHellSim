@@ -179,10 +179,13 @@ function SimRun(sim, params, stats) {
             /* Random events, which could mean a demon surge influx */
             Events(params, sim, stats);
             
-            /* 1/4 chance to reduce merc counter */
+            /* 1/3 chance to reduce merc counter -- we assume Signing Bonus was researched. */
             if (sim.mercCounter > 0) {
-                if (Rand(0,3) == 0) {
-                    sim.mercCounter--;
+                let rolls = PopFactor(params);
+                for (let i = 0; i < rolls && sim.mercCounter > 0; i++) {
+                    if (Rand(0,3) == 0) {
+                        sim.mercCounter--;
+                    }
                 }
             }
         }
@@ -612,9 +615,11 @@ function BloodWar(params, sim, stats) {
         if (params.shieldGen) {
             divisor += 250;
         }
-        let danger = sim.threat / divisor;
-        let exposure = Math.min(10, sim.surveyors);
-        let risk = 10 - Rand(0, exposure+1);
+        let popfactor = PopFactor(params);
+        let danger = popfactor * (sim.threat / divisor);
+        let max_risk = popfactor * 10;
+        let exposure = Math.min(max_risk, sim.surveyors);
+        let risk = max_risk - Rand(0, exposure+1);
         
         if (danger > risk) {
             let cap = Math.round(danger);
@@ -1012,6 +1017,9 @@ function HealSoldiers(params, sim, stats) {
             healCredits += Math.floor(3 * Fathom(params, params.mantis_thralls));
         }
     }
+    if (params.highPop) {
+        healCredits *= TraitSelect(params.HighPop, 1.2, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5);
+    }
     if (params.governor == "sports") {
         healCredits *= 1.5;
     }
@@ -1043,8 +1051,11 @@ function RepairSurveyors(params, sim, stats) {
     let repair = 180;
     if (params.repairDroids > 0) {
         repair *= 0.95 ** params.repairDroids;
-        repair = Math.round(repair);
     }
+    if (params.highPop) {
+        repair /= TraitSelect(params.HighPop, 1.2, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5);
+    }
+    repair = Math.round(repair);
     
     sim.carRepair++;
     if (sim.carRepair >= repair) {

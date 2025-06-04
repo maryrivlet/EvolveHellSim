@@ -959,11 +959,35 @@ function ConvertSave(save) {
             defenders = 0;
             garrison = save.civic.garrison.max;
         }
+        let popFactor = 1;
+        if (save.race['high_pop']) {
+            switch(save.race.high_pop) {
+                case 0.1:
+                case 0.25:
+                    popFactor = 2;
+                    break;
+                case 0.5:
+                    popFactor = 3;
+                    break;
+                case 1:
+                    popFactor = 4;
+                    break;
+                case 2:
+                    popFactor = 5;
+                    break;
+                case 3:
+                    popFactor = 6;
+                    break;
+                case 4:
+                    popFactor = 7;
+                    break;
+            }
+        }
         $('#patrols')[0].value = patrols;
         $('#patrolSize')[0].value = patrolSize;
         $('#defenders')[0].value = defenders;
         $('#garrison')[0].value = garrison;
-        $('#surveyors')[0].value = save.portal.carport ? save.portal.carport.count : 0;
+        $('#surveyors')[0].value = save.portal.carport ? popFactor * save.portal.carport.count : 0;
         $('#repairDroids')[0].value = save.portal.repair_droid ? save.portal.repair_droid.count : 0;
         $('#turrets')[0].value = save.portal.turret ? save.portal.turret.on : 0;
         $('#beacons')[0].value = save.portal.attractor ? save.portal.attractor.on : 0;
