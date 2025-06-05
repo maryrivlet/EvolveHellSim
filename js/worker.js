@@ -93,8 +93,8 @@ function SimStart(id, simId, params, stats) {
         sim.maxHellSoldiers += forgeSoldiers;
     }
     /* Calculate patrol rating and training rate ahead of time for efficiency */
-    sim.patrolRating = ArmyRating(params, false, params.patrolSize);
-    sim.patrolRatingDroids = ArmyRating(params, false, params.patrolSize + DroidSize(params));
+    sim.patrolRating = Math.round(ArmyRating(params, false, params.patrolSize));
+    sim.patrolRatingDroids = Math.round(ArmyRating(params, false, params.patrolSize + DroidSize(params)));
     sim.trainingRate = TrainingRate(params);
 
     LogResult(stats, " -- Sim " + sim.simId.toString().padStart(Math.floor(Math.log10(params.sims)) + 1, 0) + " --\n");
@@ -123,8 +123,8 @@ function ProvideInfo (params) {
     var forgeSoldiers;
     
     fortressRating = FortressRating(params, false);
-    patrolRating = ArmyRating(params, false, params.patrolSize);
-    patrolRatingDroids = ArmyRating(params, false, params.patrolSize + DroidSize(params));
+    patrolRating = Math.round(ArmyRating(params, false, params.patrolSize));
+    patrolRatingDroids = Math.round(ArmyRating(params, false, params.patrolSize + DroidSize(params)));
     tickLength = TickLength(params);
     trainingRate = TrainingRate(params);
     forgeSoldiers = ForgeSoldiers(params);
@@ -371,8 +371,8 @@ function BloodWar(params, sim, stats) {
     let needPity = true;
     /* Update patrol rating if cautious/tusked, for random weather */
     if (params.cautious || params.tusk) {
-        sim.patrolRating = ArmyRating(params, sim, params.patrolSize);
-        sim.patrolRatingDroids = ArmyRating(params, sim, params.patrolSize + DroidSize(params));
+        sim.patrolRating = Math.round(ArmyRating(params, sim, params.patrolSize));
+        sim.patrolRatingDroids = Math.round(ArmyRating(params, sim, params.patrolSize + DroidSize(params)));
     }
     let patrolWounds = 0;
     let extraWounds = 0;
@@ -421,7 +421,7 @@ function BloodWar(params, sim, stats) {
                 if (droid) {
                     patrolSize += DroidSize(params);
                 }
-                patrolRating = ArmyRating(params, sim, patrolSize, wounded);
+                patrolRating = Math.round(ArmyRating(params, sim, patrolSize, wounded));
             }
             
             let minDemons = Math.floor(sim.threat / 50);
@@ -1487,7 +1487,7 @@ function FortressRating(params, sim) {
             break;
     }
     
-    return ArmyRating(params, sim, defenders, wounded) + params.turrets * turretRating;
+    return Math.round(ArmyRating(params, sim, defenders, wounded)) + params.turrets * turretRating;
 }
 
 function ForgeSoldiers(params) {
