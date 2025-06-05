@@ -1020,7 +1020,7 @@ function ConvertSave(save) {
         $('#soulForge')[0].value = 0;
     }
 
-    $('#soul_bait')[0].checked = save.tech['hell_pit'] && save.tech.hell_pit >= 6 ? true : false;
+    $('#soul_bait')[0].checked = save.tech['hell_pit'] && save.tech.hell_pit >= 8 ? true : false;
     /* "Soul Power" enables the tech 5 event which is random, just assume it will happen */
     $('#asphodel_hostility')[0].checked = save.tech['asphodel'] && save.tech.asphodel >= 4 ? true : false;
     $('#asphodel_mech_security')[0].checked = save.tech['asphodel'] && save.tech.asphodel >= 6 ? true : false;
