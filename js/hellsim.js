@@ -774,9 +774,70 @@ function SetParams() {
     }
 }
 
+function ParseSaveFormat(importString) {
+    if (importString.startsWith('EvS1|')) {
+        return [1, importString.slice(5)];
+    } else if (importString.startsWith('EvS2|')) {
+        return [2, importString.slice(5)];
+    } else if (importString.startsWith('EvS3|')) {
+        return [3, importString.slice(5)];
+    } else {
+        return false;
+    }
+}
+
+function ParseSave(importString) {
+    let formatArr = ParseSaveFormat(importString);
+    if (!formatArr) return false;
+    let format = formatArr[0];
+    let b64 = formatArr[1];
+    let bin = atob(b64);
+    let arr = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+    let text = fflate.strFromU8(fflate.inflateSync(arr));
+    let object = JSON.parse(text);
+    if (format == 1) return object;
+    let shapes = object[0];
+    
+    function ParseObject(object) {
+        if (object == null || typeof object !== 'object') return object;
+        let tag = object[0];
+        if (tag == -1) {
+            let array = new Array(object.length - 1);
+            for (let i = 1; i < object.length; i++) array[i - 1] = ParseObject(object[i]);
+            return array;
+        }
+        let keys = shapes[tag];
+        let parsed = {};
+        for (let i = 1; i < object.length; i++) {
+            let key = keys[i - 1];
+            let value = ParseObject(object[i]);
+            if (key === '__proto__') {
+                Object.defineProperty(parsed, key, {
+                    value: value,
+                    writable: true,
+                    enumerable: true,
+                    configurable: true
+                });
+            } else {
+                parsed[key] = value;
+            }
+        }
+        return parsed;
+    }
+    
+    let parsed = ParseObject(object[1]);
+    
+    // ship positions don't matter to us
+    
+    return parsed;
+}
+
 function ImportSave() {
-    if ($('#saveString').val().length > 0){
-        let saveState = JSON.parse(LZString.decompressFromBase64($('#saveString').val()));
+    let importString = $('#saveString').val();
+    if (importString.length > 0) {
+        let saveState = ParseSave(importString);
+        console.log(saveState);
         if (saveState && 'evolution' in saveState && 'settings' in saveState && 'stats' in saveState && 'plasmid' in saveState.stats){
             ConvertSave(saveState);
             $('#result').val("Import successful!\n");
@@ -1017,8 +1078,6 @@ function ParseFathom(save, race) {
 }
 
 function ConvertSave(save) {
-    console.log(save);
-    
     /* Fill form fields based on Evolve save data */
     $('#universe')[0].value = save.race.universe;
     $('#dark_energy')[0].value = save.prestige && save.prestige.Dark.count || 0;
