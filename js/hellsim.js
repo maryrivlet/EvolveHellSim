@@ -789,6 +789,223 @@ function ImportSave() {
     $('#saveString').val("")
 }
 
+// let s = ""; for (let idx in traits) { s += idx + ": " + traits[idx].val + ",\n"; } console.log(s);
+let kTraitValues = {
+    adaptable: 3,
+    wasteful: -3,
+    xenophobic: -5,
+    carnivore: 3,
+    beast: 2,
+    cautious: -2,
+    herbivore: -7,
+    instinct: 5,
+    forager: 4,
+    small: 6,
+    weak: -3,
+    large: -5,
+    strong: 5,
+    cold_blooded: -2,
+    scales: 5,
+    flier: 3,
+    hollow_bones: 2,
+    sky_lover: -2,
+    rigid: -2,
+    high_pop: 3,
+    fast_growth: 2,
+    high_metabolism: -1,
+    photosynth: 3,
+    sappy: 4,
+    asymmetrical: -3,
+    detritivore: 2,
+    spores: 2,
+    spongy: -2,
+    submerged: 3,
+    low_light: -2,
+    elusive: 7,
+    iron_allergy: -4,
+    smoldering: 7,
+    cold_intolerance: -4,
+    chilled: 7,
+    heat_intolerance: -4,
+    scavenger: 3,
+    nomadic: -5,
+    immoral: 4,
+    evil: 0,
+    blissful: 3,
+    pompous: -6,
+    holy: 4,
+    artifical: 5,
+    powered: -6,
+    psychic: 10,
+    tormented: -25,
+    darkness: 1,
+    unfathomable: 15,
+    creative: 8,
+    diverse: -4,
+    studious: 2,
+    arrogant: -2,
+    brute: 7,
+    angry: -1,
+    lazy: -4,
+    curious: 4,
+    pack_mentality: 4,
+    tracker: 2,
+    playful: 5,
+    freespirit: -3,
+    beast_of_burden: 3,
+    sniper: 6,
+    hooved: -4,
+    rage: 4,
+    heavy: -4,
+    gnawer: -1,
+    calm: 6,
+    pack_rat: 3,
+    paranoid: -3,
+    greedy: -5,
+    merchant: 3,
+    smart: 6,
+    puny: -4,
+    dumb: -5,
+    tough: 4,
+    nearsighted: -4,
+    intelligent: 7,
+    regenerative: 8,
+    gluttony: -2,
+    slow: -6,
+    armored: 4,
+    optimistic: 3,
+    chameleon: 6,
+    slow_digestion: 1,
+    astrologer: 3,
+    hard_of_hearing: -3,
+    resourceful: 4,
+    selenophobia: -6,
+    leathery: 2,
+    pessimistic: -1,
+    hoarder: 4,
+    solitary: -1,
+    kindling_kindred: 8,
+    iron_wood: 4,
+    pyrophobia: -4,
+    catnip: 1,
+    hyper: 4,
+    skittish: -4,
+    fragrant: -3,
+    sticky: 3,
+    anise: 1,
+    infectious: 4,
+    parasite: -4,
+    toxic: 5,
+    nyctophilia: -3,
+    infiltrator: 4,
+    hibernator: -3,
+    cannibalize: 5,
+    frail: -2,
+    malnutrition: 1,
+    claws: 5,
+    atrophy: -1,
+    hivemind: 9,
+    tunneler: 2,
+    blood_thirst: 5,
+    apex_predator: 6,
+    invertebrate: -2,
+    suction_grip: 4,
+    befuddle: 4,
+    environmentalist: -5,
+    unorganized: -2,
+    musical: 5,
+    revive: 4,
+    slow_regen: -4,
+    forge: 4,
+    autoignition: -4,
+    blurry: 5,
+    snowy: -3,
+    ravenous: -5,
+    ghostly: 5,
+    lawless: 3,
+    mistrustful: -1,
+    humpback: 4,
+    thalassophobia: -4,
+    unfavored: -4,
+    fiery: 10,
+    terrifying: 6,
+    slaver: 12,
+    compact: 10,
+    conniving: 4,
+    pathetic: -5,
+    spiritual: 4,
+    truthful: -7,
+    unified: 4,
+    rainbow: 3,
+    gloomy: 3,
+    magnificent: 6,
+    noble: -3,
+    imitation: 6,
+    emotionless: -4,
+    logical: 6,
+    shapeshifter: 10,
+    deconstructor: -4,
+    linked: 4,
+    dark_dweller: -3,
+    swift: 10,
+    anthropophagite: -2,
+    living_tool: 12,
+    bloated: -10,
+    artisan: 9,
+    stubborn: -5,
+    rogue: 6,
+    untrustworthy: -4,
+    living_materials: 6,
+    unstable: -5,
+    elemental: 5,
+    chicken: -8,
+    tusk: 6,
+    blubber: -3,
+    ocular_power: 9,
+    floating: -3,
+    wish: 13,
+    devious: -4,
+    grenadier: 6,
+    aggressive: -2,
+    empowered: 8,
+    blasphemous: -5,
+    ooze: -50,
+    soul_eater: 0,
+    untapped: 0,
+    emfield: -20,
+};
+
+let kEmpowermentRange = {
+    0.1: [-1, 2],
+    0.25: [-2, 3],
+    0.5: [-3, 4],
+    1: [-4, 6],
+    2: [-6, 9],
+    3: [-8, 12],
+    4: [-99, 99],
+};
+
+function ParseTrait(save, trait, empowerment) {
+    let savedLevel = save.race[trait];
+    if (!savedLevel) return 0;
+    if (empowerment > 0) {
+        let range = kEmpowermentRange[empowerment];
+        let val = kTraitValues[trait];
+        if (val >= range[0] && val <= range[1]) {
+            switch (savedLevel) {
+                case 0.1: return 0.25;
+                case 0.25: return 0.5;
+                case 0.5: return 1;
+                case 1: return 2;
+                case 2: return 3;
+                case 3: return 4;
+                case 4: return 4;
+            }
+        }
+    }
+    return savedLevel;
+}
+
 function ParseFathom(save, race) {
     if (save.city['surfaceDwellers']) {
         let idx = save.city.surfaceDwellers.indexOf(race);
@@ -832,54 +1049,56 @@ function ConvertSave(save) {
     $('#bureaucratic_efficiency')[0].checked = save['genes'] && save.genes['governor'] && save.genes.governor >= 3 ? true : false;
     
     $('#aquatic')[0].checked = (save.race.species == "sharkin" || save.race.species == "octigoran");
-    $('#aggressive')[0].value = save.race['aggressive'] || 0;
-    $('#apexPredator')[0].value = save.race['apex_predator'] || 0;
-    $('#astrologer')[0].value = save.race['astrologer'] || 0;
-    $('#armored')[0].value = save.race['armored'] || 0;
-    $('#artifical')[0].value = save.race['artifical'] || 0;
-    $('#beast')[0].value = save.race['beast'] || 0;
-    $('#blurry')[0].value = save.race['blurry'] || 0;
-    $('#brute')[0].value = save.race['brute'] || 0;
-    $('#cannibal')[0].value = save.race['cannibalize'] || 0;
-    $('#cautious')[0].value = save.race['cautious'] || 0;
-    $('#chameleon')[0].value = save.race['chameleon'] || 0;
-    $('#chicken')[0].value = save.race['chicken'] || 0;
-    $('#claws')[0].value = save.race['claws'] || 0;
-    $('#curious')[0].value = save.race['curious'] || 0;
-    $('#diverse')[0].value = save.race['diverse'] || 0;
-    $('#elemental')[0].value = save.race['elemental'] || 0;
-    $('#elusive')[0].value = save.race['elusive'] || 0;
-    $('#evil')[0].value = save.race['evil'] || 0;
-    $('#fiery')[0].value = save.race['fiery'] || 0;
-    $('#ghostly')[0].value = save.race['ghostly'] || 0;
-    $('#grenadier')[0].value = save.race['grenadier'] || 0;
-    $('#highPop')[0].value = save.race['high_pop'] || 0;
-    $('#hivemind')[0].value = save.race['hivemind'] || 0;
-    $('#holy')[0].value = save.race['holy'] || 0;
-    $('#hyper')[0].value = save.race['hyper'] || 0;
-    $('#instincts')[0].value = save.race['instinct'] || 0;
-    $('#kindling')[0].value = save.race['kindling_kindred'] || 0;
-    $('#ocularPower')[0].value = save.race['ocular_power'] || 0;
-    $('#ooze')[0].value = save.race['ooze'] || 0;
-    $('#parasite')[0].value = save.race['parasite'] || 0;
-    $('#pathetic')[0].value = save.race['pathetic'] || 0;
-    $('#psychic')[0].value = save.race['psychic'] || 0;
-    $('#puny')[0].value = save.race['puny'] || 0;
-    $('#rhinoRage')[0].value = save.race['rage'] || 0;
-    $('#regenerative')[0].value = save.race['regenerative'] || 0;
-    $('#revive')[0].value = save.race['revive'] || 0;
-    $('#rogue')[0].value = save.race['rogue'] || 0;
-    $('#scales')[0].value = save.race['scales'] || 0;
-    $('#slaver')[0].value = save.race['slaver'] || 0;
-    $('#slow')[0].value = save.race['slow'] || 0;
-    $('#slowRegen')[0].value = save.race['slow_regen'] || 0;
-    $('#smoldering')[0].value = save.race['smoldering'] || 0;
-    $('#sniper')[0].value = save.race['sniper'] || 0;
-    $('#sticky')[0].value = save.race['sticky'] || 0;
-    $('#swift')[0].value = save.race['swift'] || 0;
-    $('#tusk')[0].value = save.race['tusk'] || 0;
-    $('#unfathomable')[0].value = save.race['unfathomable'] || 0;
-    $('#unfavored')[0].value = save.race['unfavored'] || 0;
+    
+    let empowerment = save.race['empowered'] || 0;
+    $('#aggressive')[0].value = ParseTrait(save, 'aggressive', empowerment);
+    $('#apexPredator')[0].value = ParseTrait(save, 'apex_predator', empowerment);
+    $('#astrologer')[0].value = ParseTrait(save, 'astrologer', empowerment);
+    $('#armored')[0].value = ParseTrait(save, 'armored', empowerment);
+    $('#artifical')[0].value = ParseTrait(save, 'artifical', empowerment);
+    $('#beast')[0].value = ParseTrait(save, 'beast', empowerment);
+    $('#blurry')[0].value = ParseTrait(save, 'blurry', empowerment);
+    $('#brute')[0].value = ParseTrait(save, 'brute', empowerment);
+    $('#cannibal')[0].value = ParseTrait(save, 'cannibalize', empowerment);
+    $('#cautious')[0].value = ParseTrait(save, 'cautious', empowerment);
+    $('#chameleon')[0].value = ParseTrait(save, 'chameleon', empowerment);
+    $('#chicken')[0].value = ParseTrait(save, 'chicken', empowerment);
+    $('#claws')[0].value = ParseTrait(save, 'claws', empowerment);
+    $('#curious')[0].value = ParseTrait(save, 'curious', empowerment);
+    $('#diverse')[0].value = ParseTrait(save, 'diverse', empowerment);
+    $('#elemental')[0].value = ParseTrait(save, 'elemental', empowerment);
+    $('#elusive')[0].value = ParseTrait(save, 'elusive', empowerment);
+    $('#evil')[0].value = ParseTrait(save, 'evil', empowerment);
+    $('#fiery')[0].value = ParseTrait(save, 'fiery', empowerment);
+    $('#ghostly')[0].value = ParseTrait(save, 'ghostly', empowerment);
+    $('#grenadier')[0].value = ParseTrait(save, 'grenadier', empowerment);
+    $('#highPop')[0].value = ParseTrait(save, 'high_pop', empowerment);
+    $('#hivemind')[0].value = ParseTrait(save, 'hivemind', empowerment);
+    $('#holy')[0].value = ParseTrait(save, 'holy', empowerment);
+    $('#hyper')[0].value = ParseTrait(save, 'hyper', empowerment);
+    $('#instincts')[0].value = ParseTrait(save, 'instinct', empowerment);
+    $('#kindling')[0].value = ParseTrait(save, 'kindling_kindred', empowerment);
+    $('#ocularPower')[0].value = ParseTrait(save, 'ocular_power', empowerment);
+    $('#ooze')[0].value = ParseTrait(save, 'ooze', empowerment);
+    $('#parasite')[0].value = ParseTrait(save, 'parasite', empowerment);
+    $('#pathetic')[0].value = ParseTrait(save, 'pathetic', empowerment);
+    $('#psychic')[0].value = ParseTrait(save, 'psychic', empowerment);
+    $('#puny')[0].value = ParseTrait(save, 'puny', empowerment);
+    $('#rhinoRage')[0].value = ParseTrait(save, 'rage', empowerment);
+    $('#regenerative')[0].value = ParseTrait(save, 'regenerative', empowerment);
+    $('#revive')[0].value = ParseTrait(save, 'revive', empowerment);
+    $('#rogue')[0].value = ParseTrait(save, 'rogue', empowerment);
+    $('#scales')[0].value = ParseTrait(save, 'scales', empowerment);
+    $('#slaver')[0].value = ParseTrait(save, 'slaver', empowerment);
+    $('#slow')[0].value = ParseTrait(save, 'slow', empowerment);
+    $('#slowRegen')[0].value = ParseTrait(save, 'slow_regen', empowerment)
+    $('#smoldering')[0].value = ParseTrait(save, 'smoldering', empowerment);
+    $('#sniper')[0].value = ParseTrait(save, 'sniper', empowerment);
+    $('#sticky')[0].value = ParseTrait(save, 'sticky', empowerment);
+    $('#swift')[0].value = ParseTrait(save, 'swift', empowerment);
+    $('#tusk')[0].value = ParseTrait(save, 'tusk', empowerment);
+    $('#unfathomable')[0].value = ParseTrait(save, 'unfathomable', empowerment);
+    $('#unfavored')[0].value = ParseTrait(save, 'unfavored', empowerment);
 
     $('#nightmare')[0].value =  save.stats.achieve['nightmare'] && save.stats.achieve.nightmare['mg'] || 0;
     $('#torturers')[0].value = save.civic['torturer'] && save.civic['torturer'].assigned || 0;
