@@ -1033,8 +1033,8 @@ function HealSoldiers(params, sim, stats) {
     if (params.highPop) {
         healCredits *= TraitSelect(params.HighPop, 1.2, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5);
     }
-    if (params.governor == "sports") {
-        healCredits *= 1.5;
+    if (params.governor == "soldier") {
+        healCredits *= params.bureaucratic_efficiency ? 1.5 : 1.4;
     }
     if (params.troll_thralls) {
         healCredits += Math.round(20 * 4 * Fathom(params, params.troll_thralls));
