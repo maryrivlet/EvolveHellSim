@@ -357,7 +357,8 @@ function BloodWar(params, sim, stats) {
     gemOdds -= sim.pity;
     gemOdds = Math.round(gemOdds * (0.948 ** params.beacons));
     if (params.ghostly) {
-        gemOdds = Math.round(gemOdds * TraitSelect(params.ghostly, 0.98, 0.95, 0.9, 0.85, 0.8, 0.78, 0.77));
+        let ghostlyFactor = 1 - TraitScale(params.ghostly, 2, 15, 23) / 100;
+        gemOdds = Math.round(gemOdds * ghostlyFactor);
     }
     if (params.wendigo_thralls) {
         gemOdds = Math.round(gemOdds * (0.01 * (100 - 10 * Fathom(params, params.wendigo_thralls))));
@@ -428,12 +429,12 @@ function BloodWar(params, sim, stats) {
             let maxDemons = Math.floor(sim.threat / 10);
             let demons = Rand(minDemons, maxDemons);
             
-            let ambushOdds = 30 + Math.max(params.elusive ? TraitSelect(params.elusive, 5, 10, 15, 20, 25, 30, 35) : 0, params.chameleon ? TraitSelect(params.chameleon, 5, 10, 15, 20, 25, 30, 35) : 0);
+            let ambushOdds = 30 + Math.max(params.elusive ? TraitScale(params.elusive, 5, 20, 35) : 0, params.chameleon ? TraitScale(params.chameleon, 5, 20, 35) : 0);
             if (params.chicken) {
-                ambushOdds -= TraitSelect(params.chicken, 22, 20, 15, 10, 8, 6, 4);
+                ambushOdds -= TraitScale(params.chicken, 110, 50, 20) / 5;
             }
             if (params.ocularPower && params.ocular_fear) {
-                ambushOdds += TraitSelect(params.ocularPower, 0, 1, 2, 2, 3, 4, 5);
+                ambushOdds += Math.round(3 * TraitScale(params.ocularPower, 10, 75, 150) / 100);
             }
             
             if (Rand(0, ambushOdds) == 0) {
@@ -499,7 +500,7 @@ function BloodWar(params, sim, stats) {
     }
     
     if (params.revive) {
-        let reviveDivisor = TraitSelect(params.revive, 4, 4, 4, 3, 2, 2, 2);
+        let reviveDivisor = TraitScale(params.revive, 4, 3, 2);
         let reviveMax = soldiersKilled / reviveDivisor + 0.25;
         /* Yes, the argument is not an integer. This is wacky in-game due to refactoring.
         It's a pretty devastating nerf in practice. See:
@@ -600,7 +601,7 @@ function BloodWar(params, sim, stats) {
         let influx = ((10000 - sim.threat) / 2500) + 1;
         influx *= 1 + (params.beacons * 0.22);
         if (params.chicken) {
-            influx *= TraitSelect(params.chicken, 2.1, 2, 1.75, 1.5, 1.4, 1.3, 1.2);
+            influx *= 1 + TraitScale(params.chicken, 110, 50, 20) / 100;
         }
         if (params.universe == "evil") {
             influx *= 1.1;
@@ -617,13 +618,13 @@ function BloodWar(params, sim, stats) {
             divisor *= params.bureaucratic_efficiency ? 1.20 : 1.10;
         }
         if (params.blurry) {
-            divisor *= TraitSelect(params.blurry, 1.05, 1.10, 1.15, 1.25, 1.35, 1.4, 1.45);
+            divisor *= 1 + TraitScale(params.blurry, 5, 25, 45) / 100;
         }
         if (params.yeti_thralls) {
             divisor *= 1 + 0.25 * Fathom(params, params.yeti_thralls);
         }
         if (params.instincts) {
-            divisor *= TraitSelect(params.instincts, 1.02, 1.03, 1.05, 1.10, 1.15, 1.2, 1.25);
+            divisor *= 1 + TraitScale(params.instincts, 2, 10, 25) / 100;
         }
         if (params.shieldGen) {
             divisor += 250;
@@ -975,13 +976,13 @@ function MercPrice(params, sim, stats) {
         price *= 1.1 ** sim.mercCounter;
     }
     if (params.brute) {
-        price *= TraitSelect(params.brute, 0.85, 0.8, 0.75, 0.5, 0.4, 0.35, 0.3);
+        price *= 1 - TraitScale(params.brute, 15, 50, 70) / 100;
     }
     if (params.orc_thralls) {
         price *= 0.5 * Fathom(params, params.orc_thralls);
     }
     if (params.highPop) {
-        price *= TraitSelect(params.highPop, 0.5, 0.5, 0.34, 0.26, 0.212, 0.18, 0.158);
+        price *= TraitScale(params.highPop, 50, 26, 15.8) / 100;
     }
     
     /* Convert to millions */
@@ -998,7 +999,9 @@ function HealSoldiers(params, sim, stats) {
     var healed = 1;
     
     if (params.regenerative) {
-        healed = TraitSelect(params.regenerative, 1, 2, 3, 4, 5, 6, 7);
+        let regenerated = TraitScale(params.regenerative, 1, 4, 7);
+        healed = Math.floor(regenerated);
+        if (regenerated > healed && Math.random() < regenerated - healed) healed++;
     }
     
     var healCredits = params.hospitals;
@@ -1017,9 +1020,9 @@ function HealSoldiers(params, sim, stats) {
     healCredits += params.fibroblast * 2;
     if (params.cannibal) {
         if (healCredits >= 20) {
-            healCredits *= TraitSelect(params.cannibal, 1.06, 1.08, 1.1, 1.15, 1.2, 1.22, 1.24);
+            healCredits *= 1 + TraitScale(params.cannibal, 6, 15, 24) / 100;
         } else {
-            healCredits += Math.floor(TraitSelect(params.cannibal, 1.2, 1.6, 2, 3, 4, 4.4, 4.8));
+            healCredits += Math.floor(TraitScale(params.cannibal, 6, 15, 24) / 5);
         }
         healCredits += 3;
     }
@@ -1031,7 +1034,7 @@ function HealSoldiers(params, sim, stats) {
         }
     }
     if (params.highPop) {
-        healCredits *= TraitSelect(params.HighPop, 1.2, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5);
+        healCredits *= TraitScale(params.HighPop, 1.2, 3.5, 6.5);
     }
     if (params.governor == "soldier") {
         healCredits *= params.bureaucratic_efficiency ? 1.5 : 1.4;
@@ -1043,7 +1046,7 @@ function HealSoldiers(params, sim, stats) {
     
     var healCost = 20;
     if (params.slowRegen) {
-        healCost *= TraitSelect(params.slowRegen, 1.45, 1.4, 1.35, 1.25, 1.2, 1.15, 1.12);
+        healCost *= 1 + TraitScale(params.slowRegen, 45, 25, 12) / 100;
     }
     healed += Math.floor(healCredits / healCost);
     healCredits = healCredits % healCost;
@@ -1061,12 +1064,13 @@ function RepairSurveyors(params, sim, stats) {
     if (sim.surveyors >= params.surveyors) {
         return;
     }
+    // TODO: update
     let repair = 180;
     if (params.repairDroids > 0) {
         repair *= 0.92 ** params.repairDroids;
     }
     if (params.highPop) {
-        repair /= TraitSelect(params.HighPop, 1.2, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5);
+        repair /= TraitScale(params.highPop, 1.2, 3.5, 6.5);
     }
     repair = Math.round(repair);
     
@@ -1103,13 +1107,15 @@ function PatrolCasualties(params, sim, stats, demons, ambush) {
             armor = 0;
         }
         if (params.armored) {
-            armor += TraitSelect(params.armored, 0, 1, 1, 2, 2, 2, 2);
+            if (params.armored >= 1) armor += 2;
+            else if (params.armored >= 0.25) armor += 1;
         }
         if (params.tortosian_thralls) {
             armor += Math.floor(2 * Fathom(params, params.tortosian_thralls));
         }
         if (params.scales) {
-            armor += TraitSelect(params.scales, 0, 1, 1, 1, 1, 2, 2);
+            if (params.scales >= 1.67) armor += 2;
+            else if (params.scales >= 0.25) armor += 1;
         }
     }
     
@@ -1124,7 +1130,7 @@ function PatrolCasualties(params, sim, stats, demons, ambush) {
         dead = Rand(0, (casualties + 1));
         let wounded = casualties - dead;
         if (params.instincts) {
-            let proportion = TraitSelect(params.instincts, 0.1, 0.15, 0.25, 0.5, 0.6, 0.65, 0.7);
+            let proportion = TraitScale(params.instincts, 10, 50, 70) / 100;
             let reduction = Math.floor(dead * proportion);
             dead -= reduction;
             wounded += reduction;
@@ -1143,10 +1149,10 @@ function PatrolCasualties(params, sim, stats, demons, ambush) {
 function TickLength(params) {
     let tickLength = 250;
     if (params.hyper) {
-        tickLength *= TraitSelect(params.hyper, 0.99, 0.98, 0.97, 0.95, 0.94, 0.93, 0.92);
+        tickLength *= 1 - TraitScale(params.hyper, 1, 5, 8)  / 100;
     }
     if (params.slow) {
-        tickLength *= TraitSelect(params.slow, 1.14, 1.13, 1.12, 1.1, 1.08, 1.06, 1.05);
+        tickLength *= 1 + TraitScale(params.slow, 14, 10, 5) / 100;
     }
     return tickLength;
 }
@@ -1164,10 +1170,10 @@ function TrainingRate(params) {
     /* Rate is calculated in percentage points per second */
     let rate = 2.5;
     if (params.highPop) {
-        rate *= TraitSelect(params.highPop, 1.2, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5);
+        rate *= TraitScale(params.highPop, 1.2, 3.5, 6.5);
     }
     if (params.diverse) {
-        rate /= TraitSelect(params.diverse, 1.4, 1.35, 1.3, 1.25, 1.2, 1.15, 1.12);
+        rate /= 1 + TraitScale(params.diverse, 40, 25, 12) / 100;
     }
     if (params.bootCamps) {
         rate *= 1 + params.bootCamps * TrainingBonus(params.vrTraining ? 0.08 : 0.05, params);
@@ -1176,12 +1182,13 @@ function TrainingRate(params) {
         rate *= 1 + params.bunkers * TrainingBonus(0.1, params);
     }
     if (params.beast) {
-        rate *= TraitSelect(params.beast, 1.03, 1.04, 1.05, 1.1, 1.15, 1.2, 1.25);
+        rate *= 1 + TraitScale(params.beast, 3, 10, 25) / 100;
     }
     if (params.brute) {
-        rate += TraitSelect(params.brute, 1, 1.25, 1.5, 2.5, 3, 3.5, 3.75);
+        rate += TraitScale(params.brute, 40, 100, 150) / 40;
     }
     if (params.orc_thralls) {
+        // 2.5 is the brute mid value 100/40
         rate += 2.5 * Fathom(params, params.orc_thralls);
     }
     /* Convert to progress per tick (as does the game) */
@@ -1212,10 +1219,10 @@ function ArmyRating(params, sim, size, wound) {
     
     if (params.rhinoRage || (params.unfathomable && params.rhinotaur_thralls)) {
         if (params.rhinoRage) {
-            rating += wounded * TraitSelect(params.rhinoRage, 0.1, 0.2, 0.3, 0.5, 0.6, 0.65, 0.7);
+            rating += wounded * TraitScale(params.rhinoRage, 10, 50, 70) / 100;
         }
         if (params.rhinotaur_thralls) {
-            rating += wounded * (0.5 * Fathom(params, params.rhinotaur_thralls));
+            rating += wounded * 50 / 100 * Fathom(params, params.rhinotaur_thralls);
         }
     } else {
         rating -= wounded / 2;
@@ -1228,10 +1235,10 @@ function ArmyRating(params, sim, size, wound) {
         /* Sniper bonus doesn't apply to the base value of 1 or the Cyborg Soldiers upgrade */
         weaponTech -= params.weaponTech >= 10 ? 2 : 1;
         if (params.sniper) {
-            weaponTech *= 1 + weaponTech * TraitSelect(params.sniper, 0.03, 0.04, 0.06, 0.08, 0.09, 0.1, 0.11);
+            weaponTech *= 1 + TraitScale(params.sniper, 3, 8, 11) / 100 * weaponTech;
         }
         if (params.centaur_thralls) {
-            weaponTech *= 1 + weaponTech * 0.08 * Fathom(params, params.centaur_thralls);
+            weaponTech *= 1 + 0.08 * weaponTech * Fathom(params, params.centaur_thralls);
         }
         weaponTech += params.weaponTech >= 10 ? 2 : 1;
     }
@@ -1243,55 +1250,55 @@ function ArmyRating(params, sim, size, wound) {
         rating *= 1 + (params.temples * 0.01);
     }
     if (sim && params.rhinoRage) {
-        let rageBonus = TraitSelect(params.rhinoRage, 0.002, 0.0025, 0.005, 0.01, 0.0125, 0.014, 0.015);
+        let rageBonus = TraitScale(params.rhinoRage, 0.2, 1, 1.5) / 100;
         rating *= 1 + (rageBonus * sim.wounded);
     }
     if (sim && params.rhinotaur_thralls) {
         rating *= 1 + 0.01 * Fathom(params, params.rhinotaur_thralls) * sim.wounded;
     }
     if (params.puny) {
-        rating *= TraitSelect(params.puny, 0.8, 0.82, 0.85, 0.9, 0.94, 0.96, 0.97);
+        rating *= 1 - TraitScale(params.puny, 20, 10, 3) / 100;
     }
     if (params.claws) {
-        rating *= TraitSelect(params.claws, 1.05, 1.08, 1.12, 1.25, 1.32, 1.35, 1.38);
+        rating *= 1 + TraitScale(params.claws, 5, 25, 38) / 100;
     }
     if (params.scorpid_thralls) {
         rating *= 1 + 0.25 * Fathom(params, params.scorpid_thralls);
     }
     if (params.chameleon) {
-        rating *= TraitSelect(params.chameleon, 1.03, 1.05, 1.1, 1.2, 1.25, 1.3, 1.35);
+        rating *= 1 + TraitScale(params.chameleon, 3, 20, 35) / 100;
     }
     if (params.cautious && sim && sim.weather == 0) {
         /* Note: old simplified weather was Rand(0, 1000) < 216 */
-        rating *= TraitSelect(params.cautious, 0.84, 0.86, 0.88, 0.9, 0.92, 0.94, 0.96);
+        rating *= 1 - TraitScale(params.cautious, 16, 10, 4) / 100;
     }
 
     if (params.apexPredator) {
-        rating *= TraitSelect(params.apexPredator, 1.1, 1.15, 1.2, 1.3, 1.4, 1.45, 1.5);
+        rating *= 1 + TraitScale(params.apexPredator, 10, 30, 50) / 100;
     }
     if (params.sharkin_thralls) {
         rating *= 1 + 0.3 * Fathom(params, params.sharkin_thralls);
     }
     if (params.swift) {
-        rating *= TraitSelect(params.swift, 1.2, 1.35, 1.55, 1.75, 1.85, 1.9, 1.92);
+        rating *= 1 + TraitScale(params.swift, 20, 75, 92) / 100;
     }
     if (params.fiery) {
-        rating *= TraitSelect(params.fiery, 1.2, 1.3, 1.4, 1.65, 1.7, 1.72, 1.74);
+        rating *= 1 + TraitScale(params.fiery, 20, 65, 74) / 100;
     }
     if (params.balorg_thralls) {
         rating *= 1 + 0.65 * Fathom(params, params.balorg_thralls);
     }
     if (params.sticky) {
-        rating *= TraitSelect(params.sticky, 1.03, 1.05, 1.08, 1.15, 1.18, 1.2, 1.22);
+        rating *= 1 + TraitScale(params.sticky, 3, 15, 22) / 100;
     }
     if (params.pinguicula_thralls) {
         rating *= 1 + 0.15 * Fathom(params, params.pinguicula_thralls);
     }
     if (params.pathetic) {
-        rating *= TraitSelect(params.pathetic, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.88);
+        rating *= 1 - TraitScale(params.pathetic, 40, 25, 12) / 100;
     }
     if (params.holy) {
-        rating *= TraitSelect(params.holy, 1.2, 1.25, 1.3, 1.5, 1.6, 1.65, 1.7);
+        rating *= 1 + TraitScale(params.holy, 20, 50, 70) / 100;
     }
     if (params.unicorn_thralls) {
         rating *= 1 + 0.5 * Fathom(params, params.unicorn_thralls);
@@ -1309,15 +1316,16 @@ function ArmyRating(params, sim, size, wound) {
         rating *= 1.05;
     }
     if (params.elemental) {
-        rating *= TraitSelect(params.elemental, 1.01, 1.02, 1.04, 1.06, 1.08, 1.1, 1.2);
+        rating *= 1 + TraitScale(params.elemental, 1, 6, 12) / 100;
     }
     if (params.ocularPower && params.ocular_disintegration) {
-        rating *= TraitSelect(params.ocularPower, 1.05, 1.125, 1.25, 1.375, 1.5, 1.625, 1.75);
+        let ocularPower = TraitScale(params.ocularPower, 10, 75, 150) / 100;
+        rating *= 1 + 50 * ocularPower / 100;
     }
     if (params.psychic) {
         let boost = 0;
         if (params.channel_assault) {
-            boost += +(TraitSelect(params.psychic, 15, 20, 30, 40, 50, 60, 65) / 50000 * params.nightmare * params.channel_assault).toFixed(3);
+            boost += +(TraitScale(params.psychic, 15, 40, 65) / 50000 * params.nightmare * params.channel_assault).toFixed(3);
         }
         rating *= 1 + boost;
     }
@@ -1344,10 +1352,10 @@ function ArmyRating(params, sim, size, wound) {
         if (sim && sim.weather == 0 && sim.temp > 0) {
             moisture += 10;
         }
-        rating *= 1 + Math.round(moisture * TraitSelect(params.tusk, 0.4, 0.5, 0.75, 1, 1.2, 1.4, 1.6)) / 100 / 2;
+        rating *= 1 + Math.round(moisture * TraitScale(params.tusk, 0.4, 1, 1.6)) / 100 / 2;
     }
     if (params.grenadier) {
-        rating *= TraitSelect(params.grenadier, 2, 2.1, 2.25, 2.5, 2.75, 3, 3.25);
+        rating *= 1 + TraitScale(params.grenadier, 100, 150, 225) / 100;
     }
     if (params.rejuvenated) {
         rating *= 1.05;
@@ -1380,7 +1388,7 @@ function ArmyRating(params, sim, size, wound) {
 
     let racialModifier = 1;
     if (params.hivemind) {
-        let breakpoint = TraitSelect(params.hivemind, 13, 12, 11, 10, 8, 7, 6);
+        let breakpoint = TraitScale(params.hivemind, 13, 10, 6);
         if (size <= breakpoint) {
             racialModifier *= (size * 0.05) + (1 - breakpoint * 0.05);
         } else {
@@ -1391,13 +1399,13 @@ function ArmyRating(params, sim, size, wound) {
         racialModifier *= 1 + (1 - (0.99 ** (size * Fathom(params, params.antid_thralls) / 4))) / 2;
     }
     if (params.cannibal) {
-        racialModifier *= TraitSelect(params.cannibal, 1.06, 1.08, 1.1, 1.15, 1.2, 1.22, 1.24);
+        racialModifier *= 1 + TraitScale(params.cannibal, 6, 15, 24) / 100;
     }
     if (params.mantis_thralls) {
         racialModifier *= 1 + 0.15 * Fathom(params, params.mantis_thralls);
     }
     if (params.ooze) {
-        racialModifier *= TraitSelect(params.ooze, 0.75, 0.8, 0.85, 0.88, 0.9, 0.92, 0.94);
+        racialModifier *= 1 - TraitScale(params.ooze, 25, 12, 6) / 100;
     }
     if (params.government == "democracy") {
         let malus = (params.governor == "bureaucrat") ? 1 : 5;
@@ -1417,7 +1425,7 @@ function ArmyRating(params, sim, size, wound) {
         }
     }
     if (params.highPop) {
-        racialModifier *= TraitSelect(params.highPop, 0.5, 0.5, 0.34, 0.26, 0.212, 0.18, 0.158);
+        racialModifier *= TraitScale(params.highPop, 50, 26, 15.8) / 100;
     }
     rating *= racialModifier;
 
@@ -1509,30 +1517,29 @@ function ForgeSoldiers(params) {
     return soldiers;
 }
 
-function TraitSelect(trait_rank, rank_tenth, rank_quarter, rank_half, rank_1, rank_2, rank_3, rank_4) {
-    switch (trait_rank || 1) {
-        case 0.1:
-            return rank_tenth;
-        case 0.25:
-            return rank_quarter;
-        case 0.5:
-            return rank_half;
-        case 1:
-        default:
-            return rank_1;
-        case 2:
-            return rank_2;
-        case 3:
-            return rank_3;
-        case 4:
-            return rank_4;
+function TraitScale(trait_rank, low, mid, high) {
+    trait_rank = Math.max(0.1, Math.min(trait_rank || 1, 2.4));
+    var a, b, t;
+    if (trait_rank < 1) {
+        a = low;
+        b = mid;
+        t = (trait_rank - 0.1) / 0.9;
+    } else if (trait_rank <= 2) {
+        a = mid;
+        b = high;
+        t = trait_rank - 1;
+    } else {
+        a = mid;
+        b = high;
+        t = 1 + (trait_rank - 2) / 2;
     }
+    return +(a + (b - a) * t).toFixed(6);
 }
 
 function AstroMod(params) {
     let mod = 1;
     if (params.astrologer) {
-        let bonus = TraitSelect(params.astrologer, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7);
+        let bonus = TraitScale(params.astrologer, 10, 40, 70) / 100;
         if (params.unfavored) {
             mod -= bonus;
         } else {
@@ -1540,7 +1547,7 @@ function AstroMod(params) {
         }
     }
     if (params.unfavored) {
-        mod *= TraitSelect(params.unfavored, -1.75, -1.5, -1.25, -1, -0.75, -0.5, -0.25);
+        mod *= -(TraitScale(params.unfavored, 175, 100, 25) / 100);
     }
     return mod;
 }
@@ -1555,7 +1562,7 @@ function Fathom(params, thralls) {
 
 function PopFactor(params) {
     if (params.highPop) {
-        return TraitSelect(params.highPop, 2, 2, 3, 4, 5, 6, 7);
+        return TraitScale(params.highPop, 2, 4, 7);
     } else {
         return 1;
     }

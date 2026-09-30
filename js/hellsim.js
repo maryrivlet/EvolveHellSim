@@ -850,219 +850,11 @@ function ImportSave() {
     $('#saveString').val("")
 }
 
-// let s = ""; for (let idx in traits) { s += idx + ": " + traits[idx].val + ",\n"; } console.log(s);
-let kTraitValues = {
-    adaptable: 3,
-    wasteful: -3,
-    xenophobic: -5,
-    carnivore: 3,
-    beast: 2,
-    cautious: -2,
-    herbivore: -7,
-    instinct: 5,
-    forager: 4,
-    small: 6,
-    weak: -3,
-    large: -5,
-    strong: 5,
-    cold_blooded: -2,
-    scales: 5,
-    flier: 3,
-    hollow_bones: 2,
-    sky_lover: -2,
-    rigid: -2,
-    high_pop: 3,
-    fast_growth: 2,
-    high_metabolism: -1,
-    photosynth: 3,
-    sappy: 4,
-    asymmetrical: -3,
-    detritivore: 2,
-    spores: 2,
-    spongy: -2,
-    submerged: 3,
-    low_light: -2,
-    elusive: 7,
-    iron_allergy: -4,
-    smoldering: 7,
-    cold_intolerance: -4,
-    chilled: 7,
-    heat_intolerance: -4,
-    scavenger: 3,
-    nomadic: -5,
-    immoral: 4,
-    evil: 0,
-    blissful: 3,
-    pompous: -6,
-    holy: 4,
-    artifical: 5,
-    powered: -6,
-    psychic: 10,
-    tormented: -25,
-    darkness: 1,
-    unfathomable: 15,
-    creative: 8,
-    diverse: -4,
-    studious: 2,
-    arrogant: -2,
-    brute: 7,
-    angry: -1,
-    lazy: -4,
-    curious: 4,
-    pack_mentality: 4,
-    tracker: 2,
-    playful: 5,
-    freespirit: -3,
-    beast_of_burden: 3,
-    sniper: 6,
-    hooved: -4,
-    rage: 4,
-    heavy: -4,
-    gnawer: -1,
-    calm: 6,
-    pack_rat: 3,
-    paranoid: -3,
-    greedy: -5,
-    merchant: 3,
-    smart: 6,
-    puny: -4,
-    dumb: -5,
-    tough: 4,
-    nearsighted: -4,
-    intelligent: 7,
-    regenerative: 8,
-    gluttony: -2,
-    slow: -6,
-    armored: 4,
-    optimistic: 3,
-    chameleon: 6,
-    slow_digestion: 1,
-    astrologer: 3,
-    hard_of_hearing: -3,
-    resourceful: 4,
-    selenophobia: -6,
-    leathery: 2,
-    pessimistic: -1,
-    hoarder: 4,
-    solitary: -1,
-    kindling_kindred: 8,
-    iron_wood: 4,
-    pyrophobia: -4,
-    catnip: 1,
-    hyper: 4,
-    skittish: -4,
-    fragrant: -3,
-    sticky: 3,
-    anise: 1,
-    infectious: 4,
-    parasite: -4,
-    toxic: 5,
-    nyctophilia: -3,
-    infiltrator: 4,
-    hibernator: -3,
-    cannibalize: 5,
-    frail: -2,
-    malnutrition: 1,
-    claws: 5,
-    atrophy: -1,
-    hivemind: 9,
-    tunneler: 2,
-    blood_thirst: 5,
-    apex_predator: 6,
-    invertebrate: -2,
-    suction_grip: 4,
-    befuddle: 4,
-    environmentalist: -5,
-    unorganized: -2,
-    musical: 5,
-    revive: 4,
-    slow_regen: -4,
-    forge: 4,
-    autoignition: -4,
-    blurry: 5,
-    snowy: -3,
-    ravenous: -5,
-    ghostly: 5,
-    lawless: 3,
-    mistrustful: -1,
-    humpback: 4,
-    thalassophobia: -4,
-    unfavored: -4,
-    fiery: 10,
-    terrifying: 6,
-    slaver: 12,
-    compact: 10,
-    conniving: 4,
-    pathetic: -5,
-    spiritual: 4,
-    truthful: -7,
-    unified: 4,
-    rainbow: 3,
-    gloomy: 3,
-    magnificent: 6,
-    noble: -3,
-    imitation: 6,
-    emotionless: -4,
-    logical: 6,
-    shapeshifter: 10,
-    deconstructor: -4,
-    linked: 4,
-    dark_dweller: -3,
-    swift: 10,
-    anthropophagite: -2,
-    living_tool: 12,
-    bloated: -10,
-    artisan: 9,
-    stubborn: -5,
-    rogue: 6,
-    untrustworthy: -4,
-    living_materials: 6,
-    unstable: -5,
-    elemental: 5,
-    chicken: -8,
-    tusk: 6,
-    blubber: -3,
-    ocular_power: 9,
-    floating: -3,
-    wish: 13,
-    devious: -4,
-    grenadier: 6,
-    aggressive: -2,
-    empowered: 8,
-    blasphemous: -5,
-    ooze: -50,
-    soul_eater: 0,
-    untapped: 0,
-    emfield: -20,
-};
-
-let kEmpowermentRange = {
-    0.1: [-1, 2],
-    0.25: [-2, 3],
-    0.5: [-3, 4],
-    1: [-4, 6],
-    2: [-6, 9],
-    3: [-8, 12],
-    4: [-99, 99],
-};
-
-function ParseTrait(save, trait, empowerment) {
+function ParseTrait(save, trait, recessive, empowered_bonus) {
     let savedLevel = save.race[trait];
     if (!savedLevel) return 0;
-    if (empowerment > 0) {
-        let range = kEmpowermentRange[empowerment];
-        let val = kTraitValues[trait];
-        if (val >= range[0] && val <= range[1]) {
-            switch (savedLevel) {
-                case 0.1: return 0.25;
-                case 0.25: return 0.5;
-                case 0.5: return 1;
-                case 1: return 2;
-                case 2: return 3;
-                case 3: return 4;
-                case 4: return 4;
-            }
-        }
+    if (empowered_bonus > 0 && !(trait in recessive)) {
+        return +(savedLevel + empowered_bonus).toFixed(6);
     }
     return savedLevel;
 }
@@ -1075,6 +867,25 @@ function ParseFathom(save, race) {
         }
     }
     return 0;
+}
+
+function TraitScale(trait_rank, low, mid, high) {
+    trait_rank = Math.max(0.1, Math.min(trait_rank || 1, 2.4));
+    var a, b, t;
+    if (trait_rank < 1) {
+        a = low;
+        b = mid;
+        t = (trait_rank - 0.1) / 0.9;
+    } else if (trait_rank <= 2) {
+        a = mid;
+        b = high;
+        t = trait_rank - 1;
+    } else {
+        a = mid;
+        b = high;
+        t = 1 + (trait_rank - 2) / 2;
+    }
+    return +(a + (b - a) * t).toFixed(6);
 }
 
 function ConvertSave(save) {
@@ -1109,55 +920,92 @@ function ConvertSave(save) {
     
     $('#aquatic')[0].checked = (save.race.species == "sharkin" || save.race.species == "octigoran");
     
-    let empowerment = save.race['empowered'] || 0;
-    $('#aggressive')[0].value = ParseTrait(save, 'aggressive', empowerment);
-    $('#apexPredator')[0].value = ParseTrait(save, 'apex_predator', empowerment);
-    $('#astrologer')[0].value = ParseTrait(save, 'astrologer', empowerment);
-    $('#armored')[0].value = ParseTrait(save, 'armored', empowerment);
-    $('#artifical')[0].value = ParseTrait(save, 'artifical', empowerment);
-    $('#beast')[0].value = ParseTrait(save, 'beast', empowerment);
-    $('#blurry')[0].value = ParseTrait(save, 'blurry', empowerment);
-    $('#brute')[0].value = ParseTrait(save, 'brute', empowerment);
-    $('#cannibal')[0].value = ParseTrait(save, 'cannibalize', empowerment);
-    $('#cautious')[0].value = ParseTrait(save, 'cautious', empowerment);
-    $('#chameleon')[0].value = ParseTrait(save, 'chameleon', empowerment);
-    $('#chicken')[0].value = ParseTrait(save, 'chicken', empowerment);
-    $('#claws')[0].value = ParseTrait(save, 'claws', empowerment);
-    $('#curious')[0].value = ParseTrait(save, 'curious', empowerment);
-    $('#diverse')[0].value = ParseTrait(save, 'diverse', empowerment);
-    $('#elemental')[0].value = ParseTrait(save, 'elemental', empowerment);
-    $('#elusive')[0].value = ParseTrait(save, 'elusive', empowerment);
-    $('#evil')[0].value = ParseTrait(save, 'evil', empowerment);
-    $('#fiery')[0].value = ParseTrait(save, 'fiery', empowerment);
-    $('#ghostly')[0].value = ParseTrait(save, 'ghostly', empowerment);
-    $('#grenadier')[0].value = ParseTrait(save, 'grenadier', empowerment);
-    $('#highPop')[0].value = ParseTrait(save, 'high_pop', empowerment);
-    $('#hivemind')[0].value = ParseTrait(save, 'hivemind', empowerment);
-    $('#holy')[0].value = ParseTrait(save, 'holy', empowerment);
-    $('#hyper')[0].value = ParseTrait(save, 'hyper', empowerment);
-    $('#instincts')[0].value = ParseTrait(save, 'instinct', empowerment);
-    $('#kindling')[0].value = ParseTrait(save, 'kindling_kindred', empowerment);
-    $('#ocularPower')[0].value = ParseTrait(save, 'ocular_power', empowerment);
-    $('#ooze')[0].value = ParseTrait(save, 'ooze', empowerment);
-    $('#parasite')[0].value = ParseTrait(save, 'parasite', empowerment);
-    $('#pathetic')[0].value = ParseTrait(save, 'pathetic', empowerment);
-    $('#psychic')[0].value = ParseTrait(save, 'psychic', empowerment);
-    $('#puny')[0].value = ParseTrait(save, 'puny', empowerment);
-    $('#rhinoRage')[0].value = ParseTrait(save, 'rage', empowerment);
-    $('#regenerative')[0].value = ParseTrait(save, 'regenerative', empowerment);
-    $('#revive')[0].value = ParseTrait(save, 'revive', empowerment);
-    $('#rogue')[0].value = ParseTrait(save, 'rogue', empowerment);
-    $('#scales')[0].value = ParseTrait(save, 'scales', empowerment);
-    $('#slaver')[0].value = ParseTrait(save, 'slaver', empowerment);
-    $('#slow')[0].value = ParseTrait(save, 'slow', empowerment);
-    $('#slowRegen')[0].value = ParseTrait(save, 'slow_regen', empowerment)
-    $('#smoldering')[0].value = ParseTrait(save, 'smoldering', empowerment);
-    $('#sniper')[0].value = ParseTrait(save, 'sniper', empowerment);
-    $('#sticky')[0].value = ParseTrait(save, 'sticky', empowerment);
-    $('#swift')[0].value = ParseTrait(save, 'swift', empowerment);
-    $('#tusk')[0].value = ParseTrait(save, 'tusk', empowerment);
-    $('#unfathomable')[0].value = ParseTrait(save, 'unfathomable', empowerment);
-    $('#unfavored')[0].value = ParseTrait(save, 'unfavored', empowerment);
+    let empowerment = Math.min(2, save.race['empowered'] || 0);
+    let empowered_genus_bonus = 0;
+    let empowered_major_bonus = 0;
+    if (empowerment > 0) {
+        empowered_genus_bonus = TraitScale(empowerment, 0.005, 0.1, 0.2);
+        empowered_major_bonus = TraitScale(empowerment, 0.01, 0.2, 0.4);
+    }
+    
+    let strand_cap = 24;
+    let strand_span = Math.max(strand_cap * 2, save.race['strandSpan'] || 0);
+    
+    let recessive_pairs = save.race['geneRecess'] || 0;
+    // Is this actually used?
+    if (save.race.species == 'custom') recessive_pairs += save.custom['race0']['recessive'] || 0;
+    if (save.race.species == 'hybrid') recessive_pairs += save.custom['race1']['recessive'] || 0;
+    
+    // search backwards for recessive pairs (bite me)
+    let recessive = {};
+    if (save.race['geneSlots']) {
+        let geneSlots = save.race['geneSlots'];
+        let i = strand_span - 2;
+        while (recessive_pairs > 0 && i >= 0) {
+            let left = geneSlots[i];
+            let right = geneSlots[i + 1];
+            if (left || right) {
+                if (left) recessive[left.g] = true;
+                if (right) recessive[right.g] = true;
+                recessive_pairs--;
+            }
+            i -= 2;
+        }
+    }
+    // for(var r in recessive) {console.log("recessive: " + r);}
+    
+    // genus traits
+    $('#artifical')[0].value = ParseTrait(save, 'artifical', recessive, empowered_genus_bonus);
+    $('#beast')[0].value = ParseTrait(save, 'beast', recessive, empowered_genus_bonus);
+    $('#cautious')[0].value = ParseTrait(save, 'cautious', recessive, empowered_genus_bonus);
+    $('#elusive')[0].value = ParseTrait(save, 'elusive', recessive, empowered_genus_bonus);
+    $('#evil')[0].value = ParseTrait(save, 'evil', recessive, empowered_genus_bonus);
+    let high_pop_rank = ParseTrait(save, 'high_pop', recessive, empowered_genus_bonus);
+    $('#highPop')[0].value = high_pop_rank;
+    $('#holy')[0].value = ParseTrait(save, 'holy', recessive, empowered_genus_bonus);
+    $('#instincts')[0].value = ParseTrait(save, 'instinct', recessive, empowered_genus_bonus);
+    $('#psychic')[0].value = ParseTrait(save, 'psychic', recessive, empowered_genus_bonus);
+    $('#scales')[0].value = ParseTrait(save, 'scales', recessive, empowered_genus_bonus);
+    $('#smoldering')[0].value = ParseTrait(save, 'smoldering', recessive, empowered_genus_bonus);
+    $('#unfathomable')[0].value = ParseTrait(save, 'unfathomable', recessive, empowered_genus_bonus);
+    
+    // major traits
+    $('#aggressive')[0].value = ParseTrait(save, 'aggressive', recessive, empowered_major_bonus);
+    $('#apexPredator')[0].value = ParseTrait(save, 'apex_predator', recessive, empowered_major_bonus);
+    $('#astrologer')[0].value = ParseTrait(save, 'astrologer', recessive, empowered_major_bonus);
+    $('#armored')[0].value = ParseTrait(save, 'armored', recessive, empowered_major_bonus);
+    $('#blurry')[0].value = ParseTrait(save, 'blurry', recessive, empowered_major_bonus);
+    $('#brute')[0].value = ParseTrait(save, 'brute', recessive, empowered_major_bonus);
+    $('#cannibal')[0].value = ParseTrait(save, 'cannibalize', recessive, empowered_major_bonus);
+    $('#chameleon')[0].value = ParseTrait(save, 'chameleon', recessive, empowered_major_bonus);
+    $('#chicken')[0].value = ParseTrait(save, 'chicken', recessive, empowered_major_bonus);
+    $('#claws')[0].value = ParseTrait(save, 'claws', recessive, empowered_major_bonus);
+    $('#curious')[0].value = ParseTrait(save, 'curious', recessive, empowered_major_bonus);
+    $('#diverse')[0].value = ParseTrait(save, 'diverse', recessive, empowered_major_bonus);
+    $('#elemental')[0].value = ParseTrait(save, 'elemental', recessive, empowered_major_bonus);
+    $('#fiery')[0].value = ParseTrait(save, 'fiery', recessive, empowered_major_bonus);
+    $('#ghostly')[0].value = ParseTrait(save, 'ghostly', recessive, empowered_major_bonus);
+    $('#grenadier')[0].value = ParseTrait(save, 'grenadier', recessive, empowered_major_bonus);
+    $('#hivemind')[0].value = ParseTrait(save, 'hivemind', recessive, empowered_major_bonus);
+    $('#hyper')[0].value = ParseTrait(save, 'hyper', recessive, empowered_major_bonus);
+    $('#kindling')[0].value = ParseTrait(save, 'kindling_kindred', recessive, empowered_major_bonus);
+    $('#ocularPower')[0].value = ParseTrait(save, 'ocular_power', recessive, empowered_major_bonus);
+    $('#ooze')[0].value = ParseTrait(save, 'ooze', recessive, empowered_major_bonus);
+    $('#parasite')[0].value = ParseTrait(save, 'parasite', recessive, empowered_major_bonus);
+    $('#pathetic')[0].value = ParseTrait(save, 'pathetic', recessive, empowered_major_bonus);
+    $('#puny')[0].value = ParseTrait(save, 'puny', recessive, empowered_major_bonus);
+    $('#rhinoRage')[0].value = ParseTrait(save, 'rage', recessive, empowered_major_bonus);
+    $('#regenerative')[0].value = ParseTrait(save, 'regenerative', recessive, empowered_major_bonus);
+    $('#revive')[0].value = ParseTrait(save, 'revive', recessive, empowered_major_bonus);
+    $('#rogue')[0].value = ParseTrait(save, 'rogue', recessive, empowered_major_bonus);
+    $('#slaver')[0].value = ParseTrait(save, 'slaver', recessive, empowered_major_bonus);
+    $('#slow')[0].value = ParseTrait(save, 'slow', recessive, empowered_major_bonus);
+    $('#slowRegen')[0].value = ParseTrait(save, 'slow_regen', recessive, empowered_major_bonus)
+    $('#sniper')[0].value = ParseTrait(save, 'sniper', recessive, empowered_major_bonus);
+    $('#sticky')[0].value = ParseTrait(save, 'sticky', recessive, empowered_major_bonus);
+    $('#swift')[0].value = ParseTrait(save, 'swift', recessive, empowered_major_bonus);
+    $('#tusk')[0].value = ParseTrait(save, 'tusk', recessive, empowered_major_bonus);
+    $('#unfavored')[0].value = ParseTrait(save, 'unfavored', recessive, empowered_major_bonus);
 
     $('#nightmare')[0].value =  save.stats.achieve['nightmare'] && save.stats.achieve.nightmare['mg'] || 0;
     $('#torturers')[0].value = save.civic['torturer'] && save.civic['torturer'].assigned || 0;
@@ -1244,34 +1092,14 @@ function ConvertSave(save) {
             garrison = save.civic.garrison.max;
         }
         let popFactor = 1;
-        if (save.race['high_pop']) {
-            switch(save.race.high_pop) {
-                case 0.1:
-                case 0.25:
-                    popFactor = 2;
-                    break;
-                case 0.5:
-                    popFactor = 3;
-                    break;
-                case 1:
-                    popFactor = 4;
-                    break;
-                case 2:
-                    popFactor = 5;
-                    break;
-                case 3:
-                    popFactor = 6;
-                    break;
-                case 4:
-                    popFactor = 7;
-                    break;
-            }
+        if (high_pop_rank > 0) {
+            popFactor = TraitScale(high_pop_rank, 2, 4, 7);
         }
         $('#patrols')[0].value = patrols;
         $('#patrolSize')[0].value = patrolSize;
         $('#defenders')[0].value = defenders;
         $('#garrison')[0].value = garrison;
-        $('#surveyors')[0].value = save.portal.carport ? popFactor * save.portal.carport.count : 0;
+        $('#surveyors')[0].value = save.portal.carport ? Math.round(popFactor * save.portal.carport.count) : 0;
         $('#repairDroids')[0].value = save.portal.repair_droid ? save.portal.repair_droid.count : 0;
         $('#turrets')[0].value = save.portal.turret ? save.portal.turret.on : 0;
         $('#beacons')[0].value = save.portal.attractor ? save.portal.attractor.on : 0;
