@@ -1362,6 +1362,12 @@ function ArmyRating(params, sim, size, wound) {
     if (params.grenadier) {
         rating *= 1 + TraitScale(params.grenadier, 100, 150, 225) / 100;
     }
+    if (params.deep_power) {
+        let power = params.deep_power_combat;
+        if (power > 50) power = 50 + (power - 50) / 2;
+        power = power / 2;
+        rating *= 1 + (params.mastery / 100) * (power / 100);
+    }
     if (params.connected) {
         let connected_rate = TraitScale(params.connected, 15, 40, 75) / 100;
         rating *= 1 + (params.harmonic_energy / 100) * connected_rate;

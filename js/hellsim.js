@@ -616,10 +616,22 @@ function OnChange() {
         $('#cEldritch')[0].hidden = true;
     }
     
+    /* Show primordial things only when needed */
+    let primordial = gParams.deep_power > 0;
+    if (primordial) {
+        $('#hPrimordial').parent()[0].hidden = false;
+        $('#cPrimordial')[0].hidden = false;
+    } else {
+        $('#hPrimordial').parent()[0].hidden = true;
+        $('#cPrimordial')[0].hidden = true;
+    }
+    
     /* Manage collapsers */
     $('.collapser-icon').each(function(index, element) {
         var el = $(element);
         if (!eldritch && el[0].id == 'hEldritchStatus') {
+            /* Skip */
+        } else if(!primordial && el[0].id == 'hPrimordialStatus') {
             /* Skip */
         } else {
             let content = $(el.parent().data("target"));
@@ -863,14 +875,13 @@ function ParseMinorTrait(save, trait) {
     let savedLevel = save.race[trait] || 0;
     if (savedLevel > 0 && save.race['geneSlots']) {
         let geneSlots = save.race['geneSlots'];
-        let bonded = true;
         for (let i = 0; i < geneSlots.length; i++) {
             if (geneSlots[i] && geneSlots[i].g === trait) {
-                bonded = geneSlots[i ^ 1];
-                break;
+                let bonded = geneSlots[i ^ 1];
+                return bonded ? savedLevel : savedLevel / 2;
             }
         }
-        return bonded ? savedLevel : savedLevel / 2;
+        return 0;
     } else {
         return savedLevel;
     }
@@ -884,6 +895,17 @@ function ParseFathom(save, race) {
         }
     }
     return 0;
+}
+
+function UniverseAffix(universe) {
+    switch (universe) {
+        case 'evil': return 'e';
+        case 'antimatter': return 'a';
+        case 'heavy': return 'h';
+        case 'micro': return 'm';
+        case 'magic': return 'mg';
+        default: return 'l';
+    }
 }
 
 function TraitScale(trait_rank, low, mid, high) {
@@ -985,6 +1007,8 @@ function ConvertSave(save) {
     $('#beast')[0].value = ParseTrait(save, 'beast', recessive, empowered_genus_bonus);
     $('#cautious')[0].value = ParseTrait(save, 'cautious', recessive, empowered_genus_bonus);
     $('#connected')[0].value = ParseTrait(save, 'connected', recessive, empowered_genus_bonus);
+    let deep_power_rank = ParseTrait(save, 'deep_power', recessive, empowered_genus_bonus);
+    $('#deep_power')[0].value = deep_power_rank;
     $('#elusive')[0].value = ParseTrait(save, 'elusive', recessive, empowered_genus_bonus);
     $('#evil')[0].value = ParseTrait(save, 'evil', recessive, empowered_genus_bonus);
     let high_pop_rank = ParseTrait(save, 'high_pop', recessive, empowered_genus_bonus);
@@ -1040,6 +1064,8 @@ function ConvertSave(save) {
 
     $('#ocular_disintegration')[0].checked = save.race['ocularPowerConfig'] && save.race.ocularPowerConfig['d'] ? true : false;
     $('#ocular_fear')[0].checked = save.race['ocularPowerConfig'] && save.race.ocularPowerConfig['f'] ? true : false;
+
+    $('#deep_power_combat')[0].checked = save.race['deepPowerConfig'] && save.race.deepPowerConfig['combat'] || 0;
 
     $('#antid_thralls')[0].value = ParseFathom(save, 'antid');
     $('#balorg_thralls')[0].value = ParseFathom(save, 'balorg');
@@ -1176,6 +1202,87 @@ function ConvertSave(save) {
     $('#bunkers')[0].value = save['eden'] && save.eden['bunker'] && save.eden.bunker.on || 0;
     $('#vacuums')[0].value = save['eden'] && save.eden['spirit_vacuum'] && save.eden.spirit_vacuum.on || 0;
     $('#batteries')[0].value = save['eden'] && save.eden['spirit_battery'] && save.eden.spirit_battery.on || 0;
+
+    let mastery = 0; // mastery in percentage points
+    let challenge_gene = save.genes['challenge'] || 0;
+    if (challenge_gene >= 2) {
+        let standard_pip_count = 0;
+        let universe_pip_count = 0;
+        
+        let universe = save.race.universe;
+        let affix = UniverseAffix(universe);
+        let standard_affix = UniverseAffix('standard');
+        for (let achievement_name in save.stats.achieve) {
+            let achievement = save.stats.achieve[achievement_name]; 
+            standard_pip_count += Math.min(5, achievement[standard_affix] || 0);
+            universe_pip_count += Math.min(5, achievement[affix] || 0);
+        }
+        
+        let is_standard = (universe == 'standard');
+        let is_antimatter = (universe == 'antimatter');
+        
+        let general_mastery_rate = 0.25;
+        let universe_mastery_rate = 0;
+        if (!is_standard) {
+            if (challenge_gene >= 4) {
+                general_mastery_rate = 0.20;
+                universe_mastery_rate = 0.10;
+            } else if (challenge_gene >= 3) {
+                general_mastery_rate = 0.15;
+                universe_mastery_rate = 0.15;
+            } else {
+                general_mastery_rate = 0.15;
+                universe_mastery_rate = 0.10;
+            }
+        }
+        
+        let grandmaster = save.stats.feat['grandmaster'] || 0;
+        let corrupted = save.stats.achieve['corrupted'] ? save.stats.achieve.corrupted['l'] || 0 : 0;
+        if (grandmaster >= 1 && corrupted >= 1) {
+            let grandmaster_perk_level = Math.min(grandmaster, corrupted);
+            general_mastery_rate *= 1 + grandmaster_perk_level / 100;
+            universe_mastery_rate *= 1 + grandmaster_perk_level / 100;
+        }
+        
+        if (is_antimatter && save.race['weak_mastery']) {
+            general_mastery_rate /= 10;
+            universe_mastery_rate /= 10;
+        }
+        if (save.race['nerfed']) { // true path, we don't really care, but sure
+            let divisor = is_antimatter ? 5 : 2;
+            general_mastery_rate /= divisor;
+            universe_mastery_rate /= divisor;
+        }
+        let ooze = ParseTrait(save, 'ooze', recessive, empowered_major_bonus);
+        if (ooze > 0) {
+            let modifier = 1 - TraitScale(ooze, 50, 30, 18) / 100;
+            general_mastery_rate *= modifier;
+            universe_mastery_rate *= modifier;
+        }
+        if (challenge_gene >= 5) {
+            let mastery_genes = ParseMinorTrait(save, 'mastery');
+            let modifier = 1 + mastery_genes / 100;
+            general_mastery_rate *= modifier;
+            universe_mastery_rate *= modifier;
+        }
+        if (deep_power_rank > 0) {
+            let modifier = 1 + TraitScale(deep_power_rank, 0, 12, 22);
+            general_mastery_rate *= modifier;
+            universe_mastery_rate *= modifier;
+        }
+        // TODO: herbivore trophies
+        
+        let general_mastery = general_mastery_rate * standard_pip_count;
+        let universe_mastery = universe_mastery_rate * universe_pip_count;
+        
+        // console.log("general mastery: " + general_mastery + " " + general_mastery_rate + " " + standard_pip_count);
+        // console.log("universe mastery: " + universe_mastery + " " + universe_mastery_rate + " " + universe_pip_count);
+        
+        // Ideally, we wouldn't have to round
+        mastery = +(general_mastery + universe_mastery).toFixed(3);
+    }
+
+    $('#mastery')[0].value = mastery;
 
     OnChange();
     
