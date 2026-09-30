@@ -1017,7 +1017,7 @@ function HealSoldiers(params, sim, stats) {
     if (params.bacTanks) {
         healCredits *= 2;
     }
-    healCredits += params.fibroblast * 2;
+    healCredits += params.fibroblast * 4;
     if (params.cannibal) {
         if (healCredits >= 20) {
             healCredits *= 1 + TraitScale(params.cannibal, 6, 15, 24) / 100;
@@ -1026,6 +1026,7 @@ function HealSoldiers(params, sim, stats) {
         }
         healCredits += 3;
     }
+    healCredits *= 1 + params.mycelial * 6 / 100;
     if (params.mantis_thralls) {
         if (healCredits >= 20) {
             healCredits *= 1 + 0.15 * Fathom(params, params.mantis_thralls);
@@ -1198,6 +1199,7 @@ function TrainingRate(params) {
 }
 
 function TrainingBonus(value, params) {
+    value *= 1 + params.ambusher * 5 / 100;
     value += params.bloodLust * 0.002;
     if (params.governor == "soldier") {
         value *= params.bureaucratic_efficiency ? 1.3 : 1.25;
@@ -1245,9 +1247,11 @@ function ArmyRating(params, sim, size, wound) {
 
     rating *= weaponTech;
 
-    rating *= 1 + (params.tactical * 0.05);
+    rating *= 1 + (params.tactical * 0.03);
     if (params.zealotry) {
-        rating *= 1 + (params.temples * 0.01);
+        // todo: huge
+        let temple_bonus = (1 + params.zealot * 0.5 / 100) * (1 + params.radiant * 1 / 100);
+        rating *= 1 + (params.temples * 0.01 * temple_bonus);
     }
     if (sim && params.rhinoRage) {
         let rageBonus = TraitScale(params.rhinoRage, 0.2, 1, 1.5) / 100;
@@ -1297,6 +1301,7 @@ function ArmyRating(params, sim, size, wound) {
     if (params.pathetic) {
         rating *= 1 - TraitScale(params.pathetic, 40, 25, 12) / 100;
     }
+    rating *= 1 + params.infernal * 6 / 100;
     if (params.holy) {
         rating *= 1 + TraitScale(params.holy, 20, 50, 70) / 100;
     }
