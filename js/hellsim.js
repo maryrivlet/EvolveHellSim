@@ -859,6 +859,23 @@ function ParseTrait(save, trait, recessive, empowered_bonus) {
     return savedLevel;
 }
 
+function ParseMinorTrait(save, trait) {
+    let savedLevel = save.race[trait] || 0;
+    if (savedLevel > 0 && save.race['geneSlots']) {
+        let geneSlots = save.race['geneSlots'];
+        let bonded = true;
+        for (let i = 0; i < geneSlots.length; i++) {
+            if (geneSlots[i] && geneSlots[i].g === trait) {
+                bonded = geneSlots[i ^ 1];
+                break;
+            }
+        }
+        return bonded ? savedLevel : savedLevel / 2;
+    } else {
+        return savedLevel;
+    }
+}
+
 function ParseFathom(save, race) {
     if (save.city['surfaceDwellers']) {
         let idx = save.city.surfaceDwellers.indexOf(race);
@@ -1043,14 +1060,14 @@ function ConvertSave(save) {
     $('#weaponTech')[0].value = save.tech['military'] ? (save.tech['military'] >= 5 ? save.tech['military'] - 1 : save.tech['military']) : 0;
     $('#armorTech')[0].value = save.tech['armor'] || 0;
     $('#turretTech')[0].value = save.tech['turret'] || 0;
-    $('#tactical')[0].value = save.race['tactical'] || 0;
+    $('#tactical')[0].value = ParseMinorTrait(save, 'tactical');
     $('#temples')[0].value = save.city.temple ? save.city.temple.count : 0;
     $('#authority')[0].value = save.resource['Authority'] && save.resource['Authority'].amount || 0;
     $('#government')[0].value = save.civic.govern.type || 'anarchy';
     $('#governor')[0].value = save.race['governor'] && save.race.governor['g'] ? save.race.governor.g.bg : 'none';
     $('#bootCamps')[0].value = save.city.boot_camp ? save.city.boot_camp.count : 0;
     $('#hospitals')[0].value = save.city.hospital ? save.city.hospital.count : 0;
-    $('#fibroblast')[0].value = save.race['fibroblast'] || 0;
+    $('#fibroblast')[0].value = ParseMinorTrait(save, 'fibroblast');
     $('#warRitual')[0].value = save.race['casting'] ? save.race.casting.army : 0;
     $('#bloodLust')[0].value = save['blood'] && save.blood['lust'] ? save.blood.lust : 0;
     $('#soulTrap')[0].value = save['blood'] && save.blood['attract'] ? save.blood.attract : 0;
