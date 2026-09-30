@@ -916,6 +916,15 @@ function ConvertSave(save) {
     $('#biome')[0].value = save.city.biome;
     $('#orbit')[0].value = save.city.calendar.orbit;
     
+    let harmonic_energy = 0;
+    if (save['pillars']) {
+        for (let key in save.pillars) {
+            if (key == save.race.species) harmonic_energy += 4;
+            else harmonic_energy++;
+        }
+    }
+    $('#harmonic_energy')[0].value = harmonic_energy;
+    
     $('#emfield')[0].checked = save.race['emfield'] ? true : false;
     $('#witch_hunter')[0].checked = save.race['witch_hunter'] ? true : false;
     $('#banana')[0].checked = save.race['banana'] ? true : false;
@@ -975,6 +984,7 @@ function ConvertSave(save) {
     $('#artifical')[0].value = ParseTrait(save, 'artifical', recessive, empowered_genus_bonus);
     $('#beast')[0].value = ParseTrait(save, 'beast', recessive, empowered_genus_bonus);
     $('#cautious')[0].value = ParseTrait(save, 'cautious', recessive, empowered_genus_bonus);
+    $('#connected')[0].value = ParseTrait(save, 'connected', recessive, empowered_genus_bonus);
     $('#elusive')[0].value = ParseTrait(save, 'elusive', recessive, empowered_genus_bonus);
     $('#evil')[0].value = ParseTrait(save, 'evil', recessive, empowered_genus_bonus);
     let high_pop_rank = ParseTrait(save, 'high_pop', recessive, empowered_genus_bonus);

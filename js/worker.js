@@ -1362,6 +1362,10 @@ function ArmyRating(params, sim, size, wound) {
     if (params.grenadier) {
         rating *= 1 + TraitScale(params.grenadier, 100, 150, 225) / 100;
     }
+    if (params.connected) {
+        let connected_rate = TraitScale(params.connected, 15, 40, 75) / 100;
+        rating *= 1 + (params.harmonic_energy / 100) * connected_rate;
+    }
     if (params.rejuvenated) {
         rating *= 1.05;
     }
