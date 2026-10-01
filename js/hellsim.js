@@ -1019,6 +1019,7 @@ function ConvertSave(save) {
     $('#ruthless')[0].value = ParseTrait(save, 'ruthless', recessive, empowered_genus_bonus);
     $('#scales')[0].value = ParseTrait(save, 'scales', recessive, empowered_genus_bonus);
     $('#smoldering')[0].value = ParseTrait(save, 'smoldering', recessive, empowered_genus_bonus);
+    $('#unassuming')[0].value = ParseTrait(save, 'unassuming', recessive, empowered_genus_bonus);
     $('#unfathomable')[0].value = ParseTrait(save, 'unfathomable', recessive, empowered_genus_bonus);
     
     // major traits

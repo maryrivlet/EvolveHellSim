@@ -767,6 +767,20 @@ function BloodWar(params, sim, stats) {
     }
 }
 
+let kEventNegative = {
+    fire: true,
+    flare: true,
+    terrorist: true,
+    surge: true,
+    protest: true,
+    scandal: true,
+    chicken_feast: true,
+    brawl: true,
+    slave1: true,
+    slave2: true,
+    slave3: true,
+};
+
 function Events(params, sim, stats) {    
     if (Rand(0, sim.eventOdds) == 0) {
         let events = [
@@ -820,6 +834,13 @@ function Events(params, sim, stats) {
         }
 
         let event = events[Rand(0, events.length)];
+        
+        if (params.unassuming && kEventNegative[event]) {
+            let reroll_chance = TraitScale(params.unassuming, 1, 10, 20);
+            if (RandFloat(0, 100) < reroll_chance) {
+                event = events[Rand(0, events.length)];
+            }
+        }
         
         if (event == "surge") {
             /* Demon surge event, if enabled by user */
@@ -1740,6 +1761,10 @@ function UpdateWeather(sim, params, stats) {
 
 function Rand(min, max) {
     return Math.floor(Math.random() * (max - min)) + min;
+}
+
+function RandFloat(min, max) {
+    return min + Math.random() * (max - min);
 }
 
 function LogResult(stats, str) {
