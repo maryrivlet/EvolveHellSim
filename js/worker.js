@@ -1321,6 +1321,9 @@ function ArmyRating(params, sim, size, wound) {
     if (params.governor == "soldier") {
         rating *= params.bureaucratic_efficiency ? 1.3 : 1.25;
     }
+    if (params.bootCamps) {
+        rating *= 1 + 0.02 * params.bootCamps * HugeFactor(params);
+    }
     if (params.rage) {
         rating *= 1.05;
     }
