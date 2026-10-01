@@ -1038,6 +1038,7 @@ function ConvertSave(save) {
     $('#ghostly')[0].value = ParseTrait(save, 'ghostly', recessive, empowered_major_bonus);
     $('#grenadier')[0].value = ParseTrait(save, 'grenadier', recessive, empowered_major_bonus);
     $('#hivemind')[0].value = ParseTrait(save, 'hivemind', recessive, empowered_major_bonus);
+    $('#humongous')[0].value = ParseTrait(save, 'humongous', recessive, empowered_major_bonus);
     $('#hyper')[0].value = ParseTrait(save, 'hyper', recessive, empowered_major_bonus);
     $('#kindling')[0].value = ParseTrait(save, 'kindling_kindred', recessive, empowered_major_bonus);
     $('#ocularPower')[0].value = ParseTrait(save, 'ocular_power', recessive, empowered_major_bonus);

@@ -212,7 +212,7 @@ function SimRun(sim, params, stats) {
         if (sim.walls < 100) {
             let repair = 200;
             if (params.repairDroids > 0) {
-                repair *= 0.95 ** params.repairDroids;
+                repair *= 0.95 ** (params.repairDroids * HugeFactor(params));
                 repair = Math.round(repair);
             }
             sim.wallRepair++;
@@ -339,6 +339,7 @@ function BloodWar(params, sim, stats) {
             let maxDemons = Math.floor(sim.threat / 10);
             let demons = Rand(minDemons, maxDemons);
             let kills = params.advDrones ? Rand(50, 125) : Rand(25, 75);
+            kills = Math.floor(kills * HugeFactor(params));
             if (kills > demons) {
                 kills = demons;
             }
@@ -355,7 +356,7 @@ function BloodWar(params, sim, stats) {
     /* Gem Chance */
     let gemOdds = params.technophobe >= 5 ? 9000 : 10000;
     gemOdds -= sim.pity;
-    gemOdds = Math.round(gemOdds * (0.948 ** params.beacons));
+    gemOdds = Math.round(gemOdds * (0.948 ** (params.beacons * HugeFactor(params))));
     if (params.ghostly) {
         let ghostlyFactor = 1 - TraitScale(params.ghostly, 2, 15, 23) / 100;
         gemOdds = Math.round(gemOdds * ghostlyFactor);
@@ -482,7 +483,7 @@ function BloodWar(params, sim, stats) {
                 
                 /* Chance to find a soul gem */
                 if (kills > 0) {
-                    let chances = Math.round(kills / Math.max(5, 35 - Math.floor(params.beacons / 3)));
+                    let chances = Math.round(kills / Math.max(5, 35 - Math.floor(params.beacons * HugeFactor(params) / 3)));
                     for (let j = 0; j < chances; j++) {
                         if (Rand(0, gemOdds) == 0) {
                             stats.patrolGems++;
@@ -599,7 +600,7 @@ function BloodWar(params, sim, stats) {
     /* Demon influx */
     if (sim.threat < 10000) {
         let influx = ((10000 - sim.threat) / 2500) + 1;
-        influx *= 1 + (params.beacons * 0.22);
+        influx *= 1 + (params.beacons * HugeFactor(params) * 0.22);
         if (params.chicken) {
             influx *= 1 + TraitScale(params.chicken, 110, 50, 20) / 100;
         }
@@ -630,9 +631,9 @@ function BloodWar(params, sim, stats) {
             divisor += 250;
         }
         let popfactor = PopFactor(params);
-        let danger = popfactor * (sim.threat / divisor);
-        let max_risk = popfactor * 10;
-        let exposure = Math.min(max_risk, sim.surveyors);
+        let danger = popfactor * (sim.threat / divisor) / HugeFactor(params);
+        let max_risk = popfactor * 10 / HugeFactor(params);
+        let exposure = Math.min(max_risk, sim.surveyors / HugeFactor(params));
         let risk = max_risk - Rand(0, exposure+1);
         
         if (danger > risk) {
@@ -645,7 +646,7 @@ function BloodWar(params, sim, stats) {
     if (sim.surveyors > 0 && droneKills > 0) {
         for (let i = 0; i < sim.surveyors; i++) {
             let searched = Math.min(100, Rand(Math.round(droneKills / sim.surveyors / 2), Math.round(droneKills / sim.surveyors)));
-            let chances = Math.round(searched / Math.max(5, 25 - Math.floor(params.beacons / 5)));
+            let chances = Math.round(searched / Math.max(5, 25 - Math.floor(params.beacons * HugeFactor(params) / 5)));
             for (let j = 0; j < chances; j++) {
                 if (Rand(0, gemOdds) == 0) {
                     stats.surveyorGems++;
@@ -668,19 +669,19 @@ function BloodWar(params, sim, stats) {
         if (params.soul_bait) {
             bonus *= 2;
         }
-        forgeSouls += params.soulAttractors * (bonus + Rand(40, 120));
+        forgeSouls += params.soulAttractors * HugeFactor(params) * (bonus + Rand(40, 120));
     }
 
     /* Ghost Trappers */
     if (forgeOperating && params.ghost_trappers) {
-        let souls = params.ghost_trappers * (params.soulTrap * 5 + Rand(150, 250));
+        let souls = params.ghost_trappers * HugeFactor(params) * (params.soulTrap * 5 + Rand(150, 250));
         if (params.dimensional_tap) {
             let heatsink = 100;
             if (params.technophobe >= 2) {
                 heatsink += params.technophobe >= 4 ? 25 : 10;
                 heatsink += 5 * params.additional_technophobe_universes;
             }
-            heatsink = Math.max(0, heatsink * params.thermal_collectors - (params.emfield ? 15000 : 10000));
+            heatsink = Math.max(0, heatsink * HugeFactor(params) * params.thermal_collectors - (params.emfield ? 15000 : 10000));
             souls *= 1 + heatsink / 12500;
         }
         let resist = 1;
@@ -698,14 +699,16 @@ function BloodWar(params, sim, stats) {
     if (forgeOperating && params.guns) {
         let gemOdds = params.technophobe >= 5 ? 6750 : 7500;
         if (params.soulLink) {
-            gemOdds = Math.round(gemOdds * 0.94 ** params.soulAttractors);
+            gemOdds = Math.round(gemOdds * 0.94 ** (params.soulAttractors * HugeFactor(params)));
         }
         let gunKills = 0;
         if (params.advGuns) {
-            gunKills = params.guns * Rand(35, 75);
+            gunKills = Rand(35, 75);
         } else {
-            gunKills = params.guns * Rand(20, 40);
+            gunKills = Rand(20, 40);
         }
+        gunKills = Math.floor(gunKills * HugeFactor(params));
+        gunKills *= params.guns; // simplification; properly should iterate
         forgeSouls += gunKills;
         stats.kills += gunKills;
         for (let i = 0; i < params.guns; i++) {
@@ -724,6 +727,8 @@ function BloodWar(params, sim, stats) {
         } else {
             gateKills = params.gateTurrets * Rand(40, 60);
         }
+        // TODO: huge is kind of weird here
+        gateKills = Math.floor(gateKills * HugeFactor(params));
         forgeSouls += gateKills;
         stats.kills += gateKills;
         for (let i = 0; i < params.gateTurrets; i++) {
@@ -752,7 +757,7 @@ function BloodWar(params, sim, stats) {
             if (params.what_is_best >= 3) {
                 base = 0.96;
             }
-            cap = Math.round(cap * base ** params.soulAttractors);
+            cap = Math.round(cap * base ** (params.soulAttractors * HugeFactor(params)));
         }
         if (sim.forgeSouls >= cap) {
             let gems = Math.floor(sim.forgeSouls / cap);
@@ -1065,14 +1070,14 @@ function RepairSurveyors(params, sim, stats) {
     if (sim.surveyors >= params.surveyors) {
         return;
     }
-    // TODO: update
     let repair = 180;
     if (params.repairDroids > 0) {
-        repair *= 0.92 ** params.repairDroids;
+        repair *= 0.92 ** (params.repairDroids * HugeFactor(params));
     }
     if (params.highPop) {
         repair /= TraitScale(params.highPop, 1.2, 3.5, 6.5);
     }
+    repair *= HugeFactor(params);
     repair = Math.round(repair);
     
     sim.carRepair++;
@@ -1084,9 +1089,9 @@ function RepairSurveyors(params, sim, stats) {
 
 function Vacuum(params, sim, stats) {
     if (params.soul_compactor && params.vacuums > 0) {
-        let drain = 1653439 * params.vacuums;
+        let drain = 1653439 * (params.vacuums * HugeFactor(params));
         if (params.suction_force && params.batteries > 0) {
-            drain *= 1 + params.batteries * 0.08;
+            drain *= 1 + params.batteries * HugeFactor(params) * 0.08;
         }
         sim.compactor_energy += Math.round(drain / 2);
         if (sim.compactor_energy >= 1000000000) {
@@ -1204,7 +1209,7 @@ function TrainingBonus(value, params) {
     if (params.governor == "soldier") {
         value *= params.bureaucratic_efficiency ? 1.3 : 1.25;
     }
-    return value;
+    return value * HugeFactor(params);
 }
 
 function ArmyRating(params, sim, size, wound) {
@@ -1249,8 +1254,7 @@ function ArmyRating(params, sim, size, wound) {
 
     rating *= 1 + (params.tactical * 0.03);
     if (params.zealotry) {
-        // todo: huge
-        let temple_bonus = (1 + params.zealot * 0.5 / 100) * (1 + params.radiant * 1 / 100);
+        let temple_bonus = (1 + params.zealot * 0.5 / 100) * (1 + params.radiant * 1 / 100) * HugeFactor(params);
         rating *= 1 + (params.temples * 0.01 * temple_bonus);
     }
     if (sim && params.rhinoRage) {
@@ -1460,7 +1464,7 @@ function ArmyRating(params, sim, size, wound) {
 }
 
 function DroidSize(params) {
-    return PopFactor(params) * (params.enhDroids ? 2 : 1);
+    return PopFactor(params) * (params.enhDroids ? 2 : 1) * HugeFactor(params);
 }
 
 function FortressRating(params, sim) {
@@ -1510,7 +1514,7 @@ function FortressRating(params, sim) {
             break;
     }
     
-    return Math.round(ArmyRating(params, sim, defenders, wounded)) + params.turrets * turretRating;
+    return Math.round(ArmyRating(params, sim, defenders, wounded)) + params.turrets * HugeFactor(params) * turretRating;
 }
 
 function ForgeSoldiers(params) {
@@ -1518,7 +1522,7 @@ function ForgeSoldiers(params) {
     let rating = Math.max(ArmyRating(params, false, 1), popfactor);
     let soldiers = Math.ceil(650 / rating);
     
-    let gunSavings = params.guns * popfactor * (params.advGuns ? 2 : 1);
+    let gunSavings = (params.guns * HugeFactor(params)) * popfactor * (params.advGuns ? 2 : 1);
     soldiers = Math.max(0, soldiers - gunSavings);
     
     if (params.hivemind && soldiers > 0) {
@@ -1570,7 +1574,7 @@ function AstroMod(params) {
 function Fathom(params, thralls) {
     let active = Math.min(100, thralls);
     if (params.torturers && active > params.torturers) {
-        active -= Math.ceil((active - params.torturers) / 3);
+        active -= Math.ceil((active - params.torturers * HugeFactor(params)) / 3);
     }
     return (active / 100) * (params.nightmare / 5);
 }
@@ -1578,6 +1582,14 @@ function Fathom(params, thralls) {
 function PopFactor(params) {
     if (params.highPop) {
         return TraitScale(params.highPop, 2, 4, 7);
+    } else {
+        return 1;
+    }
+}
+
+function HugeFactor(params) {
+    if (params.humongous) {
+        return TraitScale(params.humongous, 1.01, 1.05, 1.1);
     } else {
         return 1;
     }
