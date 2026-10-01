@@ -1237,7 +1237,6 @@ function ArmyRating(params, sim, size, wound) {
 
     /* Game code subtracts 1 for tech >= 5 to skip bunk beds.  Here that gets skipped in the HTML selection values themselves */
     let weaponTech = params.weaponTech;
-
     if (weaponTech > 1) {
         /* Sniper bonus doesn't apply to the base value of 1 or the Cyborg Soldiers upgrade */
         weaponTech -= params.weaponTech >= 10 ? 2 : 1;
@@ -1249,9 +1248,11 @@ function ArmyRating(params, sim, size, wound) {
         }
         weaponTech += params.weaponTech >= 10 ? 2 : 1;
     }
-
     rating *= weaponTech;
-
+    
+    if (params.ruthless) {
+        rating *= 1 + TraitScale(params.ruthless, 1, 10, 20) / 100;
+    }
     rating *= 1 + (params.tactical * 0.03);
     if (params.zealotry) {
         let temple_bonus = (1 + params.zealot * 0.5 / 100) * (1 + params.radiant * 1 / 100) * HugeFactor(params);
