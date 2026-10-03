@@ -1,10 +1,9 @@
-# Simple workflow for deploying static content to GitHub Pages
-name: Deploy static content to Pages
+name: Deploy beta content to Pages
 
 on:
   # Runs on pushes targeting the default branch
   push:
-    branches: ["master"]
+    branches: ["evolve_1.5"]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -31,6 +30,16 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          path: beta
+      - name: Download main dist
+        uses: dawidd6/action-download-artifact@v6
+        with:
+          workflow: static.yml
+          branch: main
+          name: main-dist
+          path: .
+          github_token: ${{ secrets.GITHUB_TOKEN }}
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
@@ -38,12 +47,6 @@ jobs:
         with:
           # Upload entire repository
           path: '.'
-      - name: Upload dist
-        uses: actions/upload-artifact@v4
-        with:
-          name: main-dist
-          path: .
-          retention-days: 30
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
