@@ -1136,7 +1136,7 @@ function ConvertSave(save) {
     }
     
     $('#moneyCap')[0].value = save.resource['Money'] ? (save.resource.Money.max / 1000000).toFixed(2) : 0;
-    $('#moneyIncome')[0].value = save.resource['Money'] ? (save.resource.Money.diff / 1000000).toFixed(2) : 0;
+    $('#moneyIncome')[0].value = 10;
     
     if (save.portal && save.portal.fortress) {
         let patrols = save.portal.fortress.patrols;
