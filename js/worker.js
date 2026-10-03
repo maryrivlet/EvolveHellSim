@@ -1181,7 +1181,7 @@ function TickLength(params) {
     if (params.slow) {
         tickLength *= 1 + TraitScale(params.slow, 14, 10, 5) / 100;
     }
-    return tickLength;
+    return Math.floor(tickLength);
 }
 
 /* Returns soldier training rate in progress points (%) per tick */
