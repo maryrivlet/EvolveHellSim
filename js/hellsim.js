@@ -1072,7 +1072,8 @@ function ConvertSave(save) {
     $('#fiery')[0].value = ParseTrait(save, 'fiery', empowerment);
     $('#ghostly')[0].value = ParseTrait(save, 'ghostly', empowerment);
     $('#grenadier')[0].value = ParseTrait(save, 'grenadier', empowerment);
-    $('#highPop')[0].value = ParseTrait(save, 'high_pop', empowerment);
+    let highPopRank = ParseTrait(save, 'high_pop', empowerment);
+    $('#highPop')[0].value = highPopRank;
     $('#hivemind')[0].value = ParseTrait(save, 'hivemind', empowerment);
     $('#holy')[0].value = ParseTrait(save, 'holy', empowerment);
     $('#hyper')[0].value = ParseTrait(save, 'hyper', empowerment);
@@ -1185,8 +1186,8 @@ function ConvertSave(save) {
             garrison = save.civic.garrison.max;
         }
         let popFactor = 1;
-        if (save.race['high_pop']) {
-            switch(save.race.high_pop) {
+        if (highPopRank > 0) {
+            switch(highPopRank) {
                 case 0.1:
                 case 0.25:
                     popFactor = 2;
