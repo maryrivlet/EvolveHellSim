@@ -1138,7 +1138,10 @@ function ConvertSave(save) {
     $('#armorTech')[0].value = save.tech['armor'] || 0;
     $('#turretTech')[0].value = save.tech['turret'] || 0;
     $('#tactical')[0].value = save.race['tactical'] || 0;
-    $('#temples')[0].value = save.city.temple ? save.city.temple.count : 0;
+    let temples = save.city.temple ? save.city.temple.count : 0;
+    if (save.race['wishStats'] && save.race.wishStats['temple']) temples++;
+    if (save.genes['ancients'] && save.genes.ancients >= 6) temples++;
+    $('#temples')[0].value = temples;
     $('#authority')[0].value = save.resource['Authority'] && save.resource['Authority'].amount || 0;
     $('#government')[0].value = save.civic.govern.type || 'anarchy';
     $('#governor')[0].value = save.race['governor'] && save.race.governor['g'] ? save.race.governor.g.bg : 'none';
