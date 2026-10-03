@@ -1025,7 +1025,7 @@ function HealSoldiers(params, sim, stats) {
     var healed = 1;
     
     if (params.regenerative) {
-        let regenerated = TraitScale(params.regenerative, 1, 4, 7);
+        let regenerated = TraitScale(params.regenerative, 1, 4, 7) * PopFactor(params);
         healed = Math.floor(regenerated);
         if (regenerated > healed && Math.random() < regenerated - healed) healed++;
     }
