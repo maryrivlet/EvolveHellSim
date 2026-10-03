@@ -1401,6 +1401,12 @@ function ArmyRating(params, sim, size, wound) {
         let connected_rate = TraitScale(params.connected, 15, 40, 75) / 100;
         rating *= 1 + (params.harmonic_energy / 100) * connected_rate;
     }
+    if (params.hunting_lodges) {
+        rating *= 1 + params.hunting_lodges * 0.02;
+    }
+    if (params.carnivore_trophies) {
+        rating *= 1 + (params.carnivore_trophies ** 0.4) / 50;
+    }
     if (params.rejuvenated) {
         rating *= 1.05;
     }

@@ -1206,6 +1206,9 @@ function ConvertSave(save) {
     $('#vacuums')[0].value = save['eden'] && save.eden['spirit_vacuum'] && save.eden.spirit_vacuum.on || 0;
     $('#batteries')[0].value = save['eden'] && save.eden['spirit_battery'] && save.eden.spirit_battery.on || 0;
 
+    $('hunting_lodges')[0].value = save.underground['hunting_lodge_perk'] && save.underground.hunting_lodge_perk.count || 0;
+    $('carnivore_trophies')[0].value = save.underground['arena'] && save.underground.arena.carnivores_trophy || 0;
+
     let mastery = 0; // mastery in percentage points
     let challenge_gene = save.genes['challenge'] || 0;
     if (challenge_gene >= 2) {
