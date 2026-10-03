@@ -1276,7 +1276,13 @@ function ConvertSave(save) {
             general_mastery_rate *= modifier;
             universe_mastery_rate *= modifier;
         }
-        // TODO: herbivore trophies
+        
+        let herbivore_trophies = save.underground['arena'] && save.underground.arena.herbivores_trophy || 0;
+        if (herbivore_trophies > 0) {
+            let modifier = 1 + (herbivore_trophies ** 0.4) / 200;
+            general_mastery_rate *= modifier;
+            universe_mastery_rate *= modifier;
+        }
         
         let general_mastery = general_mastery_rate * standard_pip_count;
         let universe_mastery = universe_mastery_rate * universe_pip_count;
